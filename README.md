@@ -42,7 +42,7 @@
 - ✅ 每个浏览器使用专属优化方法
 
 ### 🖱️ 用户体验
-- ✅ 双击标签页关闭（Edge/Vivaldi/Firefox/LibreWolf 原生支持）
+- ✅ 双击标签页关闭（5个浏览器原生支持：Edge/Vivaldi/Firefox/LibreWolf/Chromium）
 - ✅ 一键启动所有浏览器
 - ✅ 精美的 HTML 部署报告
 
@@ -134,10 +134,10 @@ multi-browser-antidetect/
 ```
 
 **原生支持：**
-- Edge、Vivaldi、Firefox、LibreWolf
+- Edge、Vivaldi、Firefox、LibreWolf、Chromium
 
 **需要扩展：**
-- Chrome、Chromium、Brave、Opera
+- Chrome、Brave、Opera
 - 推荐扩展：[Double Click Closes Tab](https://chromewebstore.google.com/detail/double-click-closes-tab/gkdnokhgbgbkbfnhfnbpnfhpnmjfpnlj)
 
 ---
