@@ -1,8 +1,18 @@
 # 🌐 多浏览器反检测系统
 
-**真实美国用户指纹伪装 + 极致隐私保护 + 8浏览器独立配置**
+**真实美国用户指纹伪装 + 极致隐私保护 + 8浏览器独立配置 + 自动扩展安装**
 
 支持：Chrome、Chromium、Firefox、Edge、Brave、Opera、Vivaldi、LibreWolf
+
+---
+
+## 🆕 最新更新（v2.0 - 官方验证版）
+
+- ✅ **所有配置经过官方文档验证** - 确保每个配置都是有效的
+- ✅ **自动安装隐私扩展** - uBlock Origin、Privacy Badger 等5个扩展
+- ✅ **修复空白主页问题** - Opera、Vivaldi、Brave 现在正确显示空白页
+- ✅ **完整验证报告** - 详细的配置验证文档
+- ✅ **快速使用指南** - 一步步教你如何使用
 
 ---
 
@@ -23,11 +33,19 @@
 - ✅ 禁用DNS预取和链接预取
 - ✅ 追踪保护启用
 - ✅ 第一方隔离（Firefox/LibreWolf）
+- ✅ **自动安装隐私扩展**（新增）
+
+### 🛡️ 自动安装的隐私扩展
+- 🛡️ **uBlock Origin** - 广告和追踪拦截
+- 🔒 **Privacy Badger** - 智能追踪保护
+- 📦 **Decentraleyes** - 本地 CDN 模拟（防止 CDN 追踪）
+- 🎨 **Canvas Defender** - Canvas 指纹保护（Chromium 系）
+- 🔗 **ClearURLs** - 清理 URL 追踪参数
 
 ### 🎯 完美用户体验
 - ✅ 书签栏默认显示
-- ✅ 主页和新标签页设置为空白页
-- ✅ 书签在新标签页打开
+- ✅ 主页和新标签页设置为空白页（已修复）
+- ✅ 书签在新标签页打开（Firefox/LibreWolf）
 - ✅ 禁用默认浏览器检查弹窗
 - ✅ 关闭所有新闻、广告、促销内容
 
@@ -42,9 +60,9 @@
 
 ## 📥 快速安装（推荐）
 
-### 方法1：一键下载安装（最简单，无需Git）
+### 🚀 完整部署流程（推荐）
 
-**复制以下命令到PowerShell（管理员）：**
+**步骤1：下载并安装浏览器**
 
 ```powershell
 # 下载项目
@@ -56,8 +74,31 @@ Expand-Archive -Path "$env:USERPROFILE\Desktop\multi-browser-antidetect.zip" -De
 # 进入目录
 cd "$env:USERPROFILE\Desktop\multi-browser-antidetect-master"
 
-# 运行部署脚本
+# 运行部署脚本（安装浏览器）
 .\DEPLOY_8_BROWSERS.ps1
+```
+
+**步骤2：修复空白主页配置（重要！）**
+
+```powershell
+# 修复 Opera、Vivaldi、Brave 的空白主页问题
+.\FIX_BLANK_HOMEPAGE.ps1
+```
+
+**步骤3：安装隐私扩展（强烈推荐）**
+
+```powershell
+# 自动安装 uBlock Origin、Privacy Badger 等5个扩展
+.\INSTALL_EXTENSIONS.ps1
+```
+
+**步骤4：重启所有浏览器**
+
+```powershell
+# 关闭所有浏览器
+Get-Process chrome,chromium,firefox,msedge,brave,opera,vivaldi,librewolf -ErrorAction SilentlyContinue | Stop-Process -Force
+
+# 然后手动打开浏览器，扩展会自动安装
 ```
 
 ---
@@ -71,6 +112,12 @@ cd multi-browser-antidetect
 
 # 运行部署脚本
 .\DEPLOY_8_BROWSERS.ps1
+
+# 修复空白主页
+.\FIX_BLANK_HOMEPAGE.ps1
+
+# 安装扩展
+.\INSTALL_EXTENSIONS.ps1
 ```
 
 ---
@@ -119,6 +166,95 @@ winget install --id Git.Git -e --silent
 ```powershell
 .\INSTALL_DEPENDENCIES.ps1
 ```
+
+---
+
+## 📜 可用脚本
+
+### 1. `DEPLOY_8_BROWSERS.ps1` - 主部署脚本
+一键安装和配置所有8个浏览器
+
+```powershell
+.\DEPLOY_8_BROWSERS.ps1
+```
+
+**功能：**
+- 安装 Chrome, Chromium, Firefox, Edge, Brave, Opera, Vivaldi, LibreWolf
+- 应用基础优化配置
+- 配置指纹随机化
+- 可选择安装哪些浏览器
+
+---
+
+### 2. `FIX_BLANK_HOMEPAGE.ps1` - 修复空白主页 ⭐ 重要
+修复 Opera、Vivaldi、Brave 不显示空白标签页的问题
+
+```powershell
+.\FIX_BLANK_HOMEPAGE.ps1
+```
+
+**修复内容：**
+- 正确配置 `HomepageIsNewTabPage = 0`（而不是 1）
+- 正确配置 `RestoreOnStartup = 4`（而不是 5）
+- 添加 `RestoreOnStartupURLs = ["about:blank"]`
+- 确保所有浏览器显示空白主页
+
+**为什么需要这个脚本？**  
+主部署脚本中的某些配置参数不正确，此脚本使用官方验证的正确参数修复问题。
+
+---
+
+### 3. `INSTALL_EXTENSIONS.ps1` - 自动安装隐私扩展 ⭐ 强烈推荐
+自动安装5个隐私和安全扩展到所有浏览器
+
+```powershell
+.\INSTALL_EXTENSIONS.ps1
+```
+
+**安装的扩展：**
+- 🛡️ **uBlock Origin** - 广告和追踪拦截
+- 🔒 **Privacy Badger** - 智能追踪保护
+- 📦 **Decentraleyes** - 本地 CDN 模拟（防止 CDN 追踪）
+- 🎨 **Canvas Defender** - Canvas 指纹保护（Chromium 系）
+- 🔗 **ClearURLs** - 清理 URL 追踪参数
+
+**工作原理：**
+- Chromium 系：通过 `ExtensionInstallForcelist` 注册表策略
+- Firefox 系：通过 `distribution/policies.json` 企业策略
+- 首次启动浏览器时自动下载和安装
+- 扩展会自动更新
+
+---
+
+### 4. `BROWSER_OPTIMIZATION_VERIFIED.ps1` - 完整优化配置
+应用所有官方验证的优化配置（独立脚本）
+
+```powershell
+.\BROWSER_OPTIMIZATION_VERIFIED.ps1
+```
+
+**包含：**
+- 所有浏览器的完整优化配置
+- 每个配置都经过官方文档验证
+- 详细的配置说明和注释
+
+---
+
+### 5. `INSTALL_DEPENDENCIES.ps1` - 依赖安装（可选）
+自动安装 winget 和 Git
+
+```powershell
+.\INSTALL_DEPENDENCIES.ps1
+```
+
+---
+
+## 📚 文档
+
+- **`QUICK_START_GUIDE.md`** - 快速使用指南，包含详细的使用说明和故障排除
+- **`OPTIMIZATION_VERIFICATION_REPORT.md`** - 完整的配置验证报告，所有配置均基于官方文档验证
+- **`CHANGELOG.md`** - 更新日志
+- **`USAGE_GUIDE.md`** - 详细使用指南
 
 ---
 
