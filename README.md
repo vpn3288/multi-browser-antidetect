@@ -42,7 +42,7 @@
 
 ## 📥 快速安装（推荐）
 
-### 方法1：一键下载安装（最简单）
+### 方法1：一键下载安装（最简单，无需Git）
 
 **复制以下命令到PowerShell（管理员）：**
 
@@ -56,10 +56,7 @@ Expand-Archive -Path "$env:USERPROFILE\Desktop\multi-browser-antidetect.zip" -De
 # 进入目录
 cd "$env:USERPROFILE\Desktop\multi-browser-antidetect-master"
 
-# 安装依赖（winget + Git）
-.\INSTALL_DEPENDENCIES.ps1
-
-# 重启PowerShell后运行部署脚本
+# 运行部署脚本
 .\DEPLOY_8_BROWSERS.ps1
 ```
 
@@ -72,44 +69,90 @@ cd "$env:USERPROFILE\Desktop\multi-browser-antidetect-master"
 git clone https://github.com/vpn3288/multi-browser-antidetect.git
 cd multi-browser-antidetect
 
-# 安装依赖
-.\INSTALL_DEPENDENCIES.ps1
-
-# 重启PowerShell后运行部署脚本
+# 运行部署脚本
 .\DEPLOY_8_BROWSERS.ps1
+```
+
+---
+
+## 🔧 安装依赖（可选）
+
+**如果你的系统没有 winget 或 Git，可以单独安装：**
+
+### 安装 winget（Windows Package Manager）
+
+```powershell
+# 以管理员身份运行
+$progressPreference = 'silentlyContinue'
+
+# 安装 VCLibs
+Invoke-WebRequest -Uri "https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx" -OutFile "$env:TEMP\VCLibs.appx"
+Add-AppxPackage -Path "$env:TEMP\VCLibs.appx"
+
+# 安装 UI.Xaml
+Invoke-WebRequest -Uri "https://github.com/microsoft/microsoft-ui-xaml/releases/download/v2.8.6/Microsoft.UI.Xaml.2.8.x64.appx" -OutFile "$env:TEMP\UIXaml.appx"
+Add-AppxPackage -Path "$env:TEMP\UIXaml.appx"
+
+# 安装 App Installer (winget)
+Invoke-WebRequest -Uri "https://aka.ms/getwinget" -OutFile "$env:TEMP\AppInstaller.msixbundle"
+Add-AppxPackage -Path "$env:TEMP\AppInstaller.msixbundle"
+
+# 清理
+Remove-Item "$env:TEMP\VCLibs.appx", "$env:TEMP\UIXaml.appx", "$env:TEMP\AppInstaller.msixbundle" -Force
+
+# 重启PowerShell后winget可用
+```
+
+### 安装 Git
+
+```powershell
+# 方法1：使用winget（推荐）
+winget install --id Git.Git -e --silent
+
+# 方法2：直接下载安装
+Invoke-WebRequest -Uri "https://github.com/git-for-windows/git/releases/download/v2.43.0.windows.1/Git-2.43.0-64-bit.exe" -OutFile "$env:TEMP\GitInstaller.exe"
+Start-Process -FilePath "$env:TEMP\GitInstaller.exe" -ArgumentList "/VERYSILENT /NORESTART" -Wait
+Remove-Item "$env:TEMP\GitInstaller.exe" -Force
+
+# 重启PowerShell后Git可用
+```
+
+**或者使用一键脚本：**
+
+```powershell
+.\INSTALL_DEPENDENCIES.ps1
 ```
 
 ---
 
 ## 🔧 详细安装步骤
 
-### 步骤1：安装依赖
+### 步骤1：下载项目
 
 **以管理员身份打开PowerShell：**
 - 按 `Win + X`
 - 选择 "Windows PowerShell (管理员)" 或 "终端 (管理员)"
 
-**运行依赖安装脚本：**
+**下载并解压：**
 
 ```powershell
-.\INSTALL_DEPENDENCIES.ps1
+# 下载
+Invoke-WebRequest -Uri "https://github.com/vpn3288/multi-browser-antidetect/archive/refs/heads/master.zip" -OutFile "$env:USERPROFILE\Desktop\multi-browser-antidetect.zip"
+
+# 解压
+Expand-Archive -Path "$env:USERPROFILE\Desktop\multi-browser-antidetect.zip" -DestinationPath "$env:USERPROFILE\Desktop" -Force
+
+# 进入目录
+cd "$env:USERPROFILE\Desktop\multi-browser-antidetect-master"
 ```
-
-这个脚本会自动安装：
-- ✅ **winget** (Windows Package Manager)
-- ✅ **Git** (版本控制工具)
-- ✅ 检查 PowerShell 版本
-
-**安装完成后，重启PowerShell！**
 
 ---
 
 ### 步骤2：部署浏览器
 
-**以管理员身份重新打开PowerShell，运行：**
+**运行部署脚本：**
 
 ```powershell
-cd "$env:USERPROFILE\Desktop\multi-browser-antidetect-master"
 .\DEPLOY_8_BROWSERS.ps1
 ```
 

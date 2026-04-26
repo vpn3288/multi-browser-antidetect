@@ -25,7 +25,7 @@ $browsers = @(
     @{Name="Edge"; Exe="C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"; Installer=$null; WingetId=$null},
     @{Name="Brave"; Exe="C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"; Installer="https://laptop-updates.brave.com/latest/winx64"; WingetId=$null},
     @{Name="Opera"; Exe="$env:LOCALAPPDATA\Programs\Opera\opera.exe"; Installer="https://net.geo.opera.com/opera/stable/windows"; WingetId=$null},
-    @{Name="Vivaldi"; Exe="$env:LOCALAPPDATA\Vivaldi\Application\vivaldi.exe"; Installer="https://downloads.vivaldi.com/stable/Vivaldi.exe"; WingetId=$null},
+    @{Name="Vivaldi"; Exe="$env:LOCALAPPDATA\Vivaldi\Application\vivaldi.exe"; Installer="https://downloads.vivaldi.com/stable/Vivaldi.6.5.3206.63.x64.exe"; WingetId=$null},
     @{Name="LibreWolf"; Exe="C:\Program Files\LibreWolf\librewolf.exe"; Installer=$null; WingetId="LibreWolf.LibreWolf"},
     @{Name="Chromium"; Exe="$env:LOCALAPPDATA\Chromium\Application\chrome.exe"; Installer=$null; WingetId="Hibbiki.Chromium"}
 )
@@ -68,11 +68,18 @@ foreach ($browser in $selectedBrowsers) {
         if ($browser.WingetId) {
             Write-Host "`n[*] 使用 winget 安装 $($browser.Name)..." -ForegroundColor Yellow
             try {
-                winget install --id $browser.WingetId --silent --accept-package-agreements --accept-source-agreements 2>&1 | Out-Null
-                if ($LASTEXITCODE -eq 0) {
-                    Write-Host "[✓] $($browser.Name) 安装完成" -ForegroundColor Green
+                # 检查 winget 是否可用
+                $wingetCmd = Get-Command winget -ErrorAction SilentlyContinue
+                if ($wingetCmd) {
+                    winget install --id $browser.WingetId --silent --accept-package-agreements --accept-source-agreements 2>&1 | Out-Null
+                    if ($LASTEXITCODE -eq 0) {
+                        Write-Host "[✓] $($browser.Name) 安装完成" -ForegroundColor Green
+                    } else {
+                        Write-Host "[✗] $($browser.Name) 安装失败" -ForegroundColor Red
+                    }
                 } else {
-                    Write-Host "[✗] $($browser.Name) 安装失败" -ForegroundColor Red
+                    Write-Host "[!] winget 未安装，跳过 $($browser.Name)" -ForegroundColor Yellow
+                    Write-Host "    手动安装: https://librewolf.net/ 或 https://chromium.woolyss.com/" -ForegroundColor Gray
                 }
             } catch {
                 Write-Host "[✗] $($browser.Name) 安装失败: $_" -ForegroundColor Red
