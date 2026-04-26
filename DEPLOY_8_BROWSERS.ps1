@@ -23,7 +23,7 @@ $browsers = @(
     @{Name="Chrome"; Exe="C:\Program Files\Google\Chrome\Application\chrome.exe"; Installer="https://dl.google.com/chrome/install/latest/chrome_installer.exe"; WingetId=$null},
     @{Name="Firefox"; Exe="C:\Program Files\Mozilla Firefox\firefox.exe"; Installer="https://download.mozilla.org/?product=firefox-latest&os=win64&lang=zh-CN"; WingetId=$null},
     @{Name="Edge"; Exe="C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"; Installer=$null; WingetId=$null},
-    @{Name="Brave"; Exe="C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"; Installer="https://laptop-updates.brave.com/latest/winx64"; WingetId=$null},
+    @{Name="Brave"; Exe=@("C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe", "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\Application\brave.exe"); Installer="https://laptop-updates.brave.com/latest/winx64"; WingetId=$null},
     @{Name="Opera"; Exe="$env:LOCALAPPDATA\Programs\Opera\opera.exe"; Installer="https://net.geo.opera.com/opera/stable/windows"; WingetId=$null},
     @{Name="Vivaldi"; Exe="$env:LOCALAPPDATA\Vivaldi\Application\vivaldi.exe"; Installer="https://downloads.vivaldi.com/stable/Vivaldi.6.5.3206.63.x64.exe"; WingetId=$null},
     @{Name="LibreWolf"; Exe="C:\Program Files\LibreWolf\librewolf.exe"; Installer=$null; WingetId="LibreWolf.LibreWolf"},
@@ -62,9 +62,32 @@ if ([string]::IsNullOrWhiteSpace($selection)) {
 
 Write-Host "`n[步骤 2/3] 检查并安装浏览器..." -ForegroundColor Cyan
 
+# 辅助函数：检查浏览器是否存在（支持多路径）
+function Test-BrowserExists {
+    param($browser)
+    
+    $exePath = $browser.Exe
+    if ($exePath -is [array]) {
+        foreach ($path in $exePath) {
+            $expandedPath = $ExecutionContext.InvokeCommand.ExpandString($path)
+            if (Test-Path $expandedPath) {
+                return $expandedPath
+            }
+        }
+        return $null
+    } else {
+        $expandedPath = $ExecutionContext.InvokeCommand.ExpandString($exePath)
+        if (Test-Path $expandedPath) {
+            return $expandedPath
+        }
+        return $null
+    }
+}
+
 foreach ($browser in $selectedBrowsers) {
-    $exePath = $ExecutionContext.InvokeCommand.ExpandString($browser.Exe)
-    if (-not (Test-Path $exePath)) {
+    $foundPath = Test-BrowserExists $browser
+    
+    if (-not $foundPath) {
         if ($browser.WingetId) {
             Write-Host "`n[*] 使用 winget 安装 $($browser.Name)..." -ForegroundColor Yellow
             try {
@@ -78,8 +101,8 @@ foreach ($browser in $selectedBrowsers) {
                     Start-Sleep -Seconds 5
                     
                     # 再次检查是否安装成功
-                    $exePath = $ExecutionContext.InvokeCommand.ExpandString($browser.Exe)
-                    if (Test-Path $exePath) {
+                    $foundPath = Test-BrowserExists $browser
+                    if ($foundPath) {
                         Write-Host "[✓] $($browser.Name) 安装完成" -ForegroundColor Green
                     } else {
                         Write-Host "[!] $($browser.Name) 安装可能需要更多时间，请稍后手动检查" -ForegroundColor Yellow
@@ -118,8 +141,8 @@ foreach ($browser in $selectedBrowsers) {
                 Start-Sleep -Seconds 3
                 
                 # 检查是否安装成功
-                $exePath = $ExecutionContext.InvokeCommand.ExpandString($browser.Exe)
-                if (Test-Path $exePath) {
+                $foundPath = Test-BrowserExists $browser
+                if ($foundPath) {
                     Write-Host "[✓] $($browser.Name) 安装完成" -ForegroundColor Green
                 } else {
                     Write-Host "[!] $($browser.Name) 安装完成，但未在预期位置找到" -ForegroundColor Yellow
