@@ -106,16 +106,13 @@ Remove-Item "$env:TEMP\VCLibs.appx", "$env:TEMP\UIXaml.appx", "$env:TEMP\AppInst
 ### 安装 Git
 
 ```powershell
-# 方法1：使用winget（推荐）
+# 使用 winget 安装（推荐）
 winget install --id Git.Git -e --silent
-
-# 方法2：直接下载安装
-Invoke-WebRequest -Uri "https://github.com/git-for-windows/git/releases/download/v2.43.0.windows.1/Git-2.43.0-64-bit.exe" -OutFile "$env:TEMP\GitInstaller.exe"
-Start-Process -FilePath "$env:TEMP\GitInstaller.exe" -ArgumentList "/VERYSILENT /NORESTART" -Wait
-Remove-Item "$env:TEMP\GitInstaller.exe" -Force
-
-# 重启PowerShell后Git可用
 ```
+
+**关闭并重新打开 PowerShell**（以管理员身份）使 Git 生效。
+
+> **注意**：如果 winget 安装 Git 时卡住，按 `Ctrl+C` 取消即可，Git 已经安装成功了。
 
 **或者使用一键脚本：**
 

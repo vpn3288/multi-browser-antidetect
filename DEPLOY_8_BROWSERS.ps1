@@ -71,11 +71,18 @@ foreach ($browser in $selectedBrowsers) {
                 # 检查 winget 是否可用
                 $wingetCmd = Get-Command winget -ErrorAction SilentlyContinue
                 if ($wingetCmd) {
-                    winget install --id $browser.WingetId --silent --accept-package-agreements --accept-source-agreements 2>&1 | Out-Null
-                    if ($LASTEXITCODE -eq 0) {
+                    Write-Host "    正在下载和安装，请稍候..." -ForegroundColor Gray
+                    $result = winget install --id $browser.WingetId --silent --accept-package-agreements --accept-source-agreements 2>&1
+                    
+                    # 等待安装完成
+                    Start-Sleep -Seconds 5
+                    
+                    # 再次检查是否安装成功
+                    $exePath = $ExecutionContext.InvokeCommand.ExpandString($browser.Exe)
+                    if (Test-Path $exePath) {
                         Write-Host "[✓] $($browser.Name) 安装完成" -ForegroundColor Green
                     } else {
-                        Write-Host "[✗] $($browser.Name) 安装失败" -ForegroundColor Red
+                        Write-Host "[!] $($browser.Name) 安装可能需要更多时间，请稍后手动检查" -ForegroundColor Yellow
                     }
                 } else {
                     Write-Host "[!] winget 未安装，跳过 $($browser.Name)" -ForegroundColor Yellow
@@ -89,24 +96,37 @@ foreach ($browser in $selectedBrowsers) {
             $installerPath = "$env:TEMP\$($browser.Name)_installer.exe"
             
             try {
-                Invoke-WebRequest -Uri $browser.Installer -OutFile $installerPath -UseBasicParsing -TimeoutSec 120
+                Write-Host "    正在下载..." -ForegroundColor Gray
+                Invoke-WebRequest -Uri $browser.Installer -OutFile $installerPath -UseBasicParsing -TimeoutSec 300
                 
+                Write-Host "    正在安装..." -ForegroundColor Gray
                 if ($browser.Name -eq "Chrome") {
-                    Start-Process -FilePath $installerPath -ArgumentList "/silent /install" -Wait
+                    Start-Process -FilePath $installerPath -ArgumentList "/silent /install" -Wait -NoNewWindow
                 } elseif ($browser.Name -eq "Firefox") {
-                    Start-Process -FilePath $installerPath -ArgumentList "/S" -Wait
+                    Start-Process -FilePath $installerPath -ArgumentList "/S" -Wait -NoNewWindow
                 } elseif ($browser.Name -eq "Brave") {
-                    Start-Process -FilePath $installerPath -ArgumentList "--install --silent --system-level" -Wait
+                    Start-Process -FilePath $installerPath -ArgumentList "--install --silent --system-level" -Wait -NoNewWindow
                 } elseif ($browser.Name -eq "Opera") {
-                    Start-Process -FilePath $installerPath -ArgumentList "/silent /launchopera=0" -Wait
+                    Start-Process -FilePath $installerPath -ArgumentList "/silent /launchopera=0" -Wait -NoNewWindow
                 } elseif ($browser.Name -eq "Vivaldi") {
-                    Start-Process -FilePath $installerPath -ArgumentList "--vivaldi-silent --do-not-launch-chrome" -Wait
+                    Start-Process -FilePath $installerPath -ArgumentList "--vivaldi-silent --do-not-launch-chrome" -Wait -NoNewWindow
                 }
                 
                 Remove-Item $installerPath -Force -ErrorAction SilentlyContinue
-                Write-Host "[✓] $($browser.Name) 安装完成" -ForegroundColor Green
+                
+                # 等待安装完成
+                Start-Sleep -Seconds 3
+                
+                # 检查是否安装成功
+                $exePath = $ExecutionContext.InvokeCommand.ExpandString($browser.Exe)
+                if (Test-Path $exePath) {
+                    Write-Host "[✓] $($browser.Name) 安装完成" -ForegroundColor Green
+                } else {
+                    Write-Host "[!] $($browser.Name) 安装完成，但未在预期位置找到" -ForegroundColor Yellow
+                }
             } catch {
                 Write-Host "[✗] $($browser.Name) 安装失败: $_" -ForegroundColor Red
+                Remove-Item $installerPath -Force -ErrorAction SilentlyContinue
             }
         } else {
             Write-Host "[!] $($browser.Name) 未安装（系统预装）" -ForegroundColor Yellow
