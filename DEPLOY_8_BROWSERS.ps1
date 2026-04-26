@@ -128,7 +128,8 @@ foreach ($browser in $selectedBrowsers) {
                 } elseif ($browser.Name -eq "Firefox") {
                     Start-Process -FilePath $installerPath -ArgumentList "/S" -Wait -NoNewWindow
                 } elseif ($browser.Name -eq "Brave") {
-                    Start-Process -FilePath $installerPath -ArgumentList "--install --silent --system-level" -Wait -NoNewWindow
+                    # 用户级安装，避免 0x80040c01 错误
+                    Start-Process -FilePath $installerPath -ArgumentList "--install --silent" -Wait -NoNewWindow
                 } elseif ($browser.Name -eq "Opera") {
                     Start-Process -FilePath $installerPath -ArgumentList "/silent /launchopera=0" -Wait -NoNewWindow
                 } elseif ($browser.Name -eq "Vivaldi") {
