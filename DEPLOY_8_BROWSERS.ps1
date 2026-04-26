@@ -420,10 +420,18 @@ function Optimize-Brave {
     # 书签栏默认显示
     Set-ItemProperty -Path $regPath -Name "BookmarkBarEnabled" -Value 1 -Type DWord -Force
     
-    # 主页和新标签页设置
-    Set-ItemProperty -Path $regPath -Name "HomepageIsNewTabPage" -Value 1 -Type DWord -Force
-    Set-ItemProperty -Path $regPath -Name "NewTabPageLocation" -Value "about:blank" -Type String -Force
-    Set-ItemProperty -Path $regPath -Name "RestoreOnStartup" -Value 5 -Type DWord -Force
+    # 主页和新标签页设置 - 强制空白页（官方文档验证）
+    Set-ItemProperty -Path $regPath -Name "HomepageIsNewTabPage" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "HomepageLocation" -Value "about:blank" -Type String -Force
+    Set-ItemProperty -Path $regPath -Name "RestoreOnStartup" -Value 4 -Type DWord -Force
+    
+    # 启动页面设置为空白（RestoreOnStartupURLs）
+    $startupUrlsPath = "$regPath\RestoreOnStartupURLs"
+    if (-not (Test-Path $startupUrlsPath)) { New-Item -Path $startupUrlsPath -Force | Out-Null }
+    Set-ItemProperty -Path $startupUrlsPath -Name "1" -Value "about:blank" -Type String -Force
+    
+    # 禁用新标签页内容建议
+    Set-ItemProperty -Path $regPath -Name "NTPContentSuggestionsEnabled" -Value 0 -Type DWord -Force
     
     # 隐私保护
     Set-ItemProperty -Path $regPath -Name "BlockThirdPartyCookies" -Value 1 -Type DWord -Force
@@ -432,6 +440,10 @@ function Optimize-Brave {
     Set-ItemProperty -Path $regPath -Name "PasswordManagerEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "PromotionalTabsEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "WebRtcIPHandling" -Value "default_public_interface_only" -Type String -Force
+    
+    # 禁用 Brave News 和推荐内容
+    Set-ItemProperty -Path $regPath -Name "BraveNewsEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "ShowHomeButton" -Value 1 -Type DWord -Force
     
     $script:reportData += @{Browser="Brave"; Method="注册表策略"; Features="内置Shields、极致隐私"; Status="✓"}
     Write-Host "[✓] Brave 优化完成" -ForegroundColor Green
