@@ -14,10 +14,10 @@ $baseDir = "C:\BrowserProfiles"
 $reportData = @()
 
 # ══════════════════════════════════════════════════════════════════
-#  检查并安装缺失的浏览器
+#  选择要安装的浏览器
 # ══════════════════════════════════════════════════════════════════
 
-Write-Host "`n[步骤 1/2] 检查并安装浏览器..." -ForegroundColor Cyan
+Write-Host "`n[步骤 1/3] 选择要安装的浏览器..." -ForegroundColor Cyan
 
 $browsers = @(
     @{Name="Chrome"; Exe="C:\Program Files\Google\Chrome\Application\chrome.exe"; Installer="https://dl.google.com/chrome/install/latest/chrome_installer.exe"; WingetId=$null},
@@ -30,7 +30,39 @@ $browsers = @(
     @{Name="Chromium"; Exe="$env:LOCALAPPDATA\Chromium\Application\chrome.exe"; Installer=$null; WingetId="Hibbiki.Chromium"}
 )
 
-foreach ($browser in $browsers) {
+Write-Host "`n请选择要安装的浏览器（多选用逗号分隔，例如: 1,2,3 或直接回车安装全部）:" -ForegroundColor Yellow
+for ($i = 0; $i -lt $browsers.Count; $i++) {
+    $browser = $browsers[$i]
+    $exePath = $ExecutionContext.InvokeCommand.ExpandString($browser.Exe)
+    $status = if (Test-Path $exePath) { "[已安装]" } else { "[未安装]" }
+    Write-Host "  $($i+1). $($browser.Name) $status" -ForegroundColor $(if (Test-Path $exePath) { "Green" } else { "Gray" })
+}
+
+$selection = Read-Host "`n输入选项 (1-8，用逗号分隔，或直接回车安装全部)"
+
+$selectedBrowsers = @()
+if ([string]::IsNullOrWhiteSpace($selection)) {
+    # 安装全部
+    $selectedBrowsers = $browsers
+    Write-Host "`n[*] 将安装所有浏览器" -ForegroundColor Cyan
+} else {
+    # 解析用户选择
+    $indices = $selection -split ',' | ForEach-Object { $_.Trim() }
+    foreach ($idx in $indices) {
+        if ($idx -match '^\d+$' -and [int]$idx -ge 1 -and [int]$idx -le $browsers.Count) {
+            $selectedBrowsers += $browsers[[int]$idx - 1]
+        }
+    }
+    Write-Host "`n[*] 将安装 $($selectedBrowsers.Count) 个浏览器: $($selectedBrowsers.Name -join ', ')" -ForegroundColor Cyan
+}
+
+# ══════════════════════════════════════════════════════════════════
+#  检查并安装选中的浏览器
+# ══════════════════════════════════════════════════════════════════
+
+Write-Host "`n[步骤 2/3] 检查并安装浏览器..." -ForegroundColor Cyan
+
+foreach ($browser in $selectedBrowsers) {
     $exePath = $ExecutionContext.InvokeCommand.ExpandString($browser.Exe)
     if (-not (Test-Path $exePath)) {
         if ($browser.WingetId) {
@@ -83,7 +115,7 @@ Start-Sleep -Seconds 3
 #  架构级优化
 # ══════════════════════════════════════════════════════════════════
 
-Write-Host "`n[步骤 2/2] 架构级优化..." -ForegroundColor Cyan
+Write-Host "`n[步骤 3/3] 架构级优化..." -ForegroundColor Cyan
 
 Write-Host "`n[*] 关闭所有浏览器..." -ForegroundColor Yellow
 Get-Process chrome,firefox,msedge,brave,opera,vivaldi,librewolf -ErrorAction SilentlyContinue | Stop-Process -Force

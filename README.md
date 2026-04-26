@@ -1,331 +1,344 @@
-# 🌐 8浏览器反检测部署方案
+# 🌐 多浏览器反检测系统
 
-**完整的多浏览器隔离部署工具 - 专为账号养号、隐私保护、反指纹追踪设计**
+**真实美国用户指纹伪装 + 极致隐私保护 + 8浏览器独立配置**
 
----
-
-## 📦 支持的浏览器（8个）
-
-| 浏览器 | 渲染引擎 | JS引擎 | 代理端口 | 时区 |
-|--------|---------|--------|---------|------|
-| **Chrome** | Blink | V8 | 7891 | America/New_York |
-| **Chromium** | Blink | V8 | 7892 | America/Chicago |
-| **Firefox** | Gecko | SpiderMonkey | 7893 | America/Denver |
-| **Edge** | Blink | V8 | 7894 | America/Los_Angeles |
-| **Brave** | Blink | V8 | 7895 | America/Phoenix |
-| **Opera** | Blink | V8 | 7896 | America/Anchorage |
-| **Vivaldi** | Blink | V8 | 7897 | Pacific/Honolulu |
-| **LibreWolf** | Gecko | SpiderMonkey | 7898 | America/Boise |
+支持：Chrome、Chromium、Firefox、Edge、Brave、Opera、Vivaldi、LibreWolf
 
 ---
 
 ## ✨ 核心特性
 
-### 🔒 极致隐私保护
-- ✅ 完全独立的用户数据目录
-- ✅ 独立代理端口（7891-7898）
-- ✅ 不同美国时区分配
-- ✅ **真实的Canvas/WebGL/AudioContext指纹随机化**
-- ✅ **每个浏览器不同但真实的硬件指纹**
-- ✅ WebRTC IP泄漏防护（仅显示代理IP）
-- ✅ 第三方Cookie完全阻止
-- ✅ 禁用所有遥测和数据收集
-- ✅ 真实的美国用户屏幕分辨率和DPI
+### 🎭 真实指纹伪装
+- ✅ **8种真实屏幕分辨率** - 基于StatCounter 2024真实数据
+- ✅ **Canvas指纹随机化** - 微小噪声，肉眼不可见
+- ✅ **WebGL指纹随机化** - 真实GPU型号（NVIDIA RTX 3060、Intel UHD 630等）
+- ✅ **AudioContext指纹随机化** - 微小频率偏移
+- ✅ **隐藏webdriver特征** - 完全隐藏自动化控制
+- ✅ **每个浏览器唯一指纹** - 8个浏览器看起来像8台不同的真实电脑
 
-### 🎯 用户体验优化
-- ✅ **书签栏默认显示**
-- ✅ **主页和新标签页设为空白页**
-- ✅ **书签在新标签页打开**
-- ✅ **禁用默认浏览器检查弹窗**
-- ✅ **关闭所有新闻、广告、促销内容**
-- ✅ 双击标签页关闭（5个浏览器原生支持）
+### 🔒 极致隐私保护
+- ✅ 阻止第三方Cookie
+- ✅ WebRTC IP泄漏防护（仅显示代理IP）
+- ✅ 禁用所有遥测和数据收集
+- ✅ 禁用DNS预取和链接预取
+- ✅ 追踪保护启用
+- ✅ 第一方隔离（Firefox/LibreWolf）
+
+### 🎯 完美用户体验
+- ✅ 书签栏默认显示
+- ✅ 主页和新标签页设置为空白页
+- ✅ 书签在新标签页打开
+- ✅ 禁用默认浏览器检查弹窗
+- ✅ 关闭所有新闻、广告、促销内容
 
 ### ⚡ 性能优化
 - ✅ 硬件加速启用
-- ✅ 缓存优化（100MB 磁盘 + 50MB 内存）
-- ✅ 网络连接优化（256 最大连接）
-- ✅ 禁用后台模式
-
-### 🎭 真实指纹伪装
-- ✅ **基于2024年真实美国用户数据的指纹**
-- ✅ **8种不同的真实屏幕分辨率（1366x768到4K）**
-- ✅ **8种不同的真实硬件配置（Intel/AMD/Apple/NVIDIA）**
-- ✅ **真实的美国常见语言设置**
-- ✅ **Canvas指纹添加微小噪声（肉眼不可见但改变指纹）**
-- ✅ **WebGL渲染器随机化（真实GPU型号）**
-- ✅ **不是一眼假的伪装，而是真实用户级别**
-
-### 🖱️ 架构级定制
-- ✅ **Chromium系**（Chrome/Chromium/Edge/Brave/Opera/Vivaldi）→ 注册表策略
-- ✅ **Gecko系**（Firefox/LibreWolf）→ user.js 配置文件
-- ✅ 每个浏览器使用专属优化方法
+- ✅ V8引擎代码缓存（Chrome）
+- ✅ WebRender加速（Firefox/LibreWolf）
+- ✅ 缓存优化（100MB磁盘 + 50MB内存）
+- ✅ 网络连接优化（256最大连接）
 
 ---
 
-## 🚀 快速开始
+## 📥 快速安装（推荐）
 
-### 1️⃣ 克隆仓库
+### 方法1：一键下载安装（最简单）
 
-```powershell
-git clone https://github.com/vpn3288/multi-browser-antidetect.git
-cd multi-browser-antidetect
-```
-
-### 2️⃣ 运行部署脚本（需要管理员权限）
+**复制以下命令到PowerShell（管理员）：**
 
 ```powershell
-# 右键 PowerShell → 以管理员身份运行
+# 下载项目
+Invoke-WebRequest -Uri "https://github.com/vpn3288/multi-browser-antidetect/archive/refs/heads/master.zip" -OutFile "$env:USERPROFILE\Desktop\multi-browser-antidetect.zip"
+
+# 解压
+Expand-Archive -Path "$env:USERPROFILE\Desktop\multi-browser-antidetect.zip" -DestinationPath "$env:USERPROFILE\Desktop" -Force
+
+# 进入目录
+cd "$env:USERPROFILE\Desktop\multi-browser-antidetect-master"
+
+# 安装依赖（winget + Git）
+.\INSTALL_DEPENDENCIES.ps1
+
+# 重启PowerShell后运行部署脚本
 .\DEPLOY_8_BROWSERS.ps1
 ```
 
-**脚本会自动：**
-- 检查并安装缺失的浏览器
-- 应用架构级优化
-- 配置独立代理端口和时区
-- **为每个浏览器生成真实的美国用户指纹**
-- **注入Canvas/WebGL指纹保护脚本**
-- 生成启动脚本
-- 打开 HTML 部署报告
+---
 
-### 3️⃣ 配置 Clash Verge
+### 方法2：使用Git克隆（需要先安装Git）
 
-为每个代理端口分配不同的美国 IP：
+```powershell
+# 克隆仓库
+git clone https://github.com/vpn3288/multi-browser-antidetect.git
+cd multi-browser-antidetect
+
+# 安装依赖
+.\INSTALL_DEPENDENCIES.ps1
+
+# 重启PowerShell后运行部署脚本
+.\DEPLOY_8_BROWSERS.ps1
+```
+
+---
+
+## 🔧 详细安装步骤
+
+### 步骤1：安装依赖
+
+**以管理员身份打开PowerShell：**
+- 按 `Win + X`
+- 选择 "Windows PowerShell (管理员)" 或 "终端 (管理员)"
+
+**运行依赖安装脚本：**
+
+```powershell
+.\INSTALL_DEPENDENCIES.ps1
+```
+
+这个脚本会自动安装：
+- ✅ **winget** (Windows Package Manager)
+- ✅ **Git** (版本控制工具)
+- ✅ 检查 PowerShell 版本
+
+**安装完成后，重启PowerShell！**
+
+---
+
+### 步骤2：部署浏览器
+
+**以管理员身份重新打开PowerShell，运行：**
+
+```powershell
+cd "$env:USERPROFILE\Desktop\multi-browser-antidetect-master"
+.\DEPLOY_8_BROWSERS.ps1
+```
+
+**脚本会：**
+1. 显示浏览器列表，让你选择要安装哪些
+2. 自动下载并安装选中的浏览器
+3. 应用所有优化配置
+4. 生成启动脚本
+5. 创建HTML报告
+
+**选择示例：**
+- 直接回车 = 安装所有8个浏览器
+- 输入 `1,2,3` = 只安装 Chrome、Firefox、Edge
+- 输入 `1` = 只安装 Chrome
+
+---
+
+### 步骤3：配置Clash代理
+
+**编辑 `clash-config-template.yaml`，为每个端口分配不同的美国IP：**
 
 ```yaml
-# clash-config-template.yaml
 proxies:
-  - name: "US-NY"
+  - name: "US-1"
     type: vmess
-    server: your-vps-ip
-    port: 10001
-    # ... 其他配置
+    server: your-server-1.com
+    port: 443
+    # ... 你的代理配置
+
+  - name: "US-2"
+    type: vmess
+    server: your-server-2.com
+    port: 443
+    # ... 你的代理配置
 
 proxy-groups:
   - name: "Chrome-7891"
     type: select
-    proxies: ["US-NY"]
+    proxies:
+      - US-1
+  
+  - name: "Chromium-7892"
+    type: select
+    proxies:
+      - US-2
+  
+  # ... 为每个端口配置不同的代理
 ```
 
-### 4️⃣ 启动浏览器
+**端口分配：**
+- Chrome: 7891 (America/New_York)
+- Chromium: 7892 (America/Chicago)
+- Firefox: 7893 (America/Denver)
+- Edge: 7894 (America/Los_Angeles)
+- Brave: 7895 (America/Phoenix)
+- Opera: 7896 (America/Anchorage)
+- Vivaldi: 7897 (Pacific/Honolulu)
+- LibreWolf: 7898 (America/Boise)
+
+---
+
+### 步骤4：启动浏览器
+
+**方法1：使用批处理文件**
 
 ```batch
-# 启动所有浏览器
 C:\BrowserProfiles\Launch_All.bat
+```
 
-# 或单独启动
+**方法2：单独启动**
+
+```batch
 C:\BrowserProfiles\Launch_Chrome.bat
+C:\BrowserProfiles\Launch_Firefox.bat
+# ... 等等
 ```
 
 ---
 
-## 📂 项目结构
+## 🧪 验证效果
+
+访问以下网站检查配置是否生效：
+
+| 检查项目 | 网址 | 预期结果 |
+|---------|------|---------|
+| IP地址 | https://ip.sb | 显示代理IP（美国） |
+| Canvas指纹 | https://browserleaks.com/canvas | 每个浏览器不同 |
+| WebGL指纹 | https://browserleaks.com/webgl | 每个浏览器不同 |
+| WebRTC泄漏 | https://browserleaks.com/webrtc | 仅显示代理IP |
+| 设备信息 | https://www.deviceinfo.me/ | 真实的硬件配置 |
+| 时区 | https://browserleaks.com/javascript | 美国时区 |
+
+---
+
+## 📁 文件结构
 
 ```
 multi-browser-antidetect/
-├── DEPLOY_8_BROWSERS.ps1              # 主部署脚本（自动安装+优化）
-├── OPTIMIZE_ARCHITECTURE.ps1          # 架构级优化脚本
-├── ENABLE_DOUBLE_CLICK_CLOSE.ps1      # 双击关闭标签页配置
-├── LAUNCH_BROWSERS.ps1                # 浏览器启动脚本
-├── FINGERPRINT_RANDOMIZER.ps1         # 指纹随机化脚本
-├── canvas_fingerprint_protection.js   # Canvas/WebGL指纹保护
-├── clash-config-template.yaml         # Clash Verge 配置模板
-├── README.md                          # 本文档
-└── LICENSE                            # MIT 许可证
+├── INSTALL_DEPENDENCIES.ps1          # 依赖安装脚本（新增）
+├── DEPLOY_8_BROWSERS.ps1             # 主部署脚本（支持选择浏览器）
+├── canvas_fingerprint_protection.js  # Canvas/WebGL/AudioContext指纹保护
+├── FINGERPRINT_RANDOMIZER.ps1        # 指纹随机化配置生成器
+├── LAUNCH_BROWSERS.ps1               # 浏览器启动脚本
+├── clash-config-template.yaml        # Clash代理配置模板
+├── README.md                         # 本文档
+├── USAGE_GUIDE.md                    # 详细使用指南
+├── OPTIMIZATION_SUMMARY.md           # 优化总结
+├── QUICK_REFERENCE.md                # 快速参考
+├── CHANGELOG.md                      # 更新日志
+└── CODE_QUALITY_REPORT.md            # 代码质量检查报告
 ```
 
 ---
 
-## 🔧 高级配置
+## 🎯 核心原理
 
-### 单独运行架构级优化
+### 为什么这个方案有效？
 
-如果浏览器已安装，只需优化：
+**传统方案的问题：**
+- ❌ 使用 `privacy.resistFingerprinting` 让所有用户看起来一样（反而更可疑）
+- ❌ 完全禁用WebGL会影响网站功能
+- ❌ 使用假的硬件信息（999核CPU）一眼就能看出
+
+**我们的方案：**
+- ✅ **基于真实数据** - 所有参数来自2024年真实美国用户统计
+- ✅ **微小差异** - Canvas噪声肉眼不可见，但改变指纹
+- ✅ **合理配置** - 硬件在真实范围内（4-16核，8-32GB）
+- ✅ **真实屏幕** - 使用真实常见分辨率
+- ✅ **每个浏览器唯一** - 8个浏览器8种不同但都真实的配置
+- ✅ **稳定指纹** - 同一浏览器指纹保持一致，不会频繁变化
+
+---
+
+## 🛠️ 故障排除
+
+### 问题1：PowerShell执行策略错误
 
 ```powershell
-.\OPTIMIZE_ARCHITECTURE.ps1
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-### 启用双击关闭标签页
+### 问题2：浏览器安装失败
 
-```powershell
-.\ENABLE_DOUBLE_CLICK_CLOSE.ps1
-```
+**手动下载安装：**
+- Chrome: https://www.google.com/chrome/
+- Firefox: https://www.mozilla.org/firefox/
+- Brave: https://brave.com/download/
+- Opera: https://www.opera.com/download
+- Vivaldi: https://vivaldi.com/download/
+- LibreWolf: https://librewolf.net/installation/windows/
 
-**原生支持：**
-- Edge、Vivaldi、Firefox、LibreWolf、Chromium
+安装后重新运行 `DEPLOY_8_BROWSERS.ps1`，脚本会检测到已安装的浏览器并跳过安装步骤。
 
-**需要扩展：**
-- Chrome、Brave、Opera
-- 推荐扩展：[Double Click Closes Tab](https://chromewebstore.google.com/detail/double-click-closes-tab/gkdnokhgbgbkbfnhfnbpnfhpnmjfpnlj)
+### 问题3：代理不工作
 
----
+1. 确认Clash正在运行
+2. 检查端口是否正确（7891-7898）
+3. 访问 https://ip.sb 确认IP是否为代理IP
 
-## 🧪 验证隔离效果
+### 问题4：指纹没有变化
 
-### 1. 验证不同 IP
-
-在每个浏览器访问：https://ip.sb
-
-应该显示不同的美国 IP 地址。
-
-### 2. 验证指纹隔离
-
-访问：https://browserleaks.com/canvas
-
-每个浏览器应该显示不同的 Canvas 指纹。
-
-### 3. 验证 WebRTC 防护
-
-访问：https://browserleaks.com/webrtc
-
-应该显示 "WebRTC is disabled" 或只显示代理 IP。
-
-### 4. 验证真实性
-
-访问：https://www.deviceinfo.me/
-
-检查你的设备信息是否看起来像真实的美国用户（屏幕分辨率、硬件、语言等）。
+1. 清除浏览器缓存和Cookie
+2. 重新运行 `DEPLOY_8_BROWSERS.ps1`
+3. 确认 `canvas_fingerprint_protection.js` 已复制到配置目录
 
 ---
 
-## 📋 优化详情
+## 📊 优化项目清单
 
-### 所有浏览器通用优化
+### Chromium系浏览器（Chrome、Chromium、Edge、Brave、Opera、Vivaldi）
+- ✅ 注册表策略配置（50+项）
+- ✅ 书签栏显示
+- ✅ 空白主页和新标签页
+- ✅ 禁用新闻、广告、促销
+- ✅ 禁用默认浏览器检查
+- ✅ 第三方Cookie阻止
+- ✅ WebRTC IP泄漏防护
+- ✅ 禁用遥测和数据收集
 
-**隐私保护：**
-- 禁用默认浏览器检查弹窗
-- 书签栏默认显示
-- 主页和新标签页设为空白页（about:blank）
-- 书签在新标签页打开
-- 禁用所有新闻、广告、促销内容
-- 阻止第三方Cookie
-- WebRTC IP泄漏防护
-- 禁用DNS预取
-- 禁用所有遥测和数据收集
+### Firefox系浏览器（Firefox、LibreWolf）
+- ✅ user.js 配置（40+项）
+- ✅ 书签栏显示
+- ✅ 空白主页和新标签页
+- ✅ 书签在新标签页打开
+- ✅ 禁用新闻、广告、推荐
+- ✅ 追踪保护启用
+- ✅ 第一方隔离
+- ✅ WebRTC禁用
 
-**指纹保护：**
-- Canvas指纹添加微小噪声
-- WebGL渲染器随机化
-- AudioContext指纹随机化
-- 真实的屏幕分辨率和DPI
-- 真实的硬件配置（CPU核心数、内存、GPU）
-- 隐藏自动化控制特征（webdriver）
-
-### Chromium 系浏览器（Chrome/Chromium/Edge/Brave/Opera/Vivaldi）
-
-**优化方法：** 注册表策略
-
-```powershell
-HKLM:\SOFTWARE\Policies\[Browser]\
-├── BackgroundModeEnabled = 0          # 禁用后台模式
-├── HardwareAccelerationModeEnabled = 1 # 启用硬件加速
-├── DiskCacheSize = 104857600          # 100MB 缓存
-├── MetricsReportingEnabled = 0        # 禁用遥测
-├── BookmarkBarEnabled = 1             # 显示书签栏
-├── HomepageIsNewTabPage = 1           # 主页为新标签页
-├── NewTabPageLocation = "about:blank" # 新标签页为空白
-├── BlockThirdPartyCookies = 1         # 阻止第三方Cookie
-└── WebRtcIPHandling = "default_public_interface_only" # WebRTC防护
-```
-
-**Edge 特有：**
-- 禁用 StartupBoost
-- 禁用购物助手
-- 禁用 Microsoft Rewards
-- 禁用集合功能
-- 启用双击关闭标签页
-
-**Vivaldi 特有：**
-- 自定义 CSS 优化
-- 双击关闭标签页配置
-
-### Gecko 系浏览器（Firefox/LibreWolf）
-
-**优化方法：** user.js 配置文件
-
-```javascript
-// 性能优化
-user_pref("browser.cache.disk.capacity", 102400);
-user_pref("gfx.webrender.all", true);              // WebRender 加速
-user_pref("layers.acceleration.force-enabled", true);
-
-// 用户体验
-user_pref("browser.toolbars.bookmarks.visibility", "always");
-user_pref("browser.startup.homepage", "about:blank");
-user_pref("browser.newtabpage.enabled", false);
-user_pref("browser.shell.checkDefaultBrowser", false);
-user_pref("browser.tabs.loadBookmarksInTabs", true);
-
-// 隐私优化
-user_pref("privacy.resistFingerprinting", false);  // 关闭以避免过度保护
-user_pref("privacy.firstparty.isolate", true);     // 第一方隔离（Firefox 独有）
-user_pref("webgl.disabled", false);                // 保持WebGL以看起来真实
-user_pref("media.peerconnection.enabled", false);  // 禁用 WebRTC
-
-// 禁用新闻和广告
-user_pref("browser.newtabpage.activity-stream.showSponsored", false);
-user_pref("browser.newtabpage.activity-stream.showSponsoredTopSites", false);
-
-// 双击关闭
-user_pref("browser.tabs.closeTabByDblclick", true);
-```
+### 所有浏览器
+- ✅ Canvas/WebGL/AudioContext指纹随机化
+- ✅ 真实屏幕分辨率和DPI缩放
+- ✅ 真实硬件配置
+- ✅ 美国时区
+- ✅ 英语语言设置
+- ✅ 隐藏webdriver特征
 
 ---
 
-## 🛡️ 安全建议
+## 🔄 更新日志
 
-1. **定期更新浏览器**：保持最新版本以获得安全补丁
-2. **使用不同的代理 IP**：确保每个浏览器使用独立的美国IP
-3. **避免登录相同账号**：不要在多个浏览器登录同一账号
-4. **定期清理 Cookie**：防止跨浏览器追踪
-5. **模拟真实用户行为**：不要机械化操作，保持自然的浏览模式
-6. **每个浏览器使用不同的指纹**：脚本已自动配置
+查看 [CHANGELOG.md](CHANGELOG.md) 了解详细的版本更新历史。
 
 ---
 
-## 🎯 为什么这个方案有效？
-
-### 传统方案的问题
-- ❌ 使用 `privacy.resistFingerprinting` 会让所有用户看起来一样（反而更可疑）
-- ❌ 完全禁用 WebGL 会让网站无法正常工作
-- ❌ 使用假的硬件信息（如999核CPU）一眼就能看出是伪造的
-
-### 我们的方案
-- ✅ **基于真实数据**：所有指纹参数都来自2024年真实美国用户统计数据
-- ✅ **微小差异**：Canvas添加肉眼不可见的噪声，而不是完全改变
-- ✅ **合理配置**：硬件配置都在真实范围内（4-16核，8-32GB内存）
-- ✅ **真实屏幕**：使用真实的常见分辨率（1920x1080, 1366x768等）
-- ✅ **每个浏览器唯一**：8个浏览器有8种不同但都真实的配置
-- ✅ **稳定指纹**：同一浏览器的指纹保持一致，不会每次都变
-
----
-
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
----
-
-## 📄 许可证
+## 📝 许可证
 
 MIT License - 详见 [LICENSE](LICENSE)
 
 ---
 
-## 🔗 相关链接
+## 🤝 贡献
 
-- **Clash Verge**：https://github.com/clash-verge-rev/clash-verge-rev
-- **LibreWolf**：https://librewolf.net/
-- **Chromium**：https://www.chromium.org/
-- **BrowserLeaks**：https://browserleaks.com/
-- **DeviceInfo**：https://www.deviceinfo.me/
+欢迎提交Issue和Pull Request！
 
 ---
 
 ## ⚠️ 免责声明
 
-本项目仅供学习和研究使用。请遵守当地法律法规，不得用于非法用途。
+本项目仅供学习和研究使用。请遵守当地法律法规，不要用于非法用途。
 
 ---
 
-**⭐ 如果这个项目对你有帮助，请给个 Star！**
+## 📞 支持
+
+- GitHub Issues: https://github.com/vpn3288/multi-browser-antidetect/issues
+- 文档: [USAGE_GUIDE.md](USAGE_GUIDE.md)
+- 快速参考: [QUICK_REFERENCE.md](QUICK_REFERENCE.md)
+
+---
+
+**🎉 享受你的8个独立浏览器身份！**
