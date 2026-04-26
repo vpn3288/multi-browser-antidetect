@@ -96,18 +96,47 @@ function Optimize-Chrome {
     $regPath = "HKLM:\SOFTWARE\Policies\Google\Chrome"
     if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }
     
+    # 性能优化
     Set-ItemProperty -Path $regPath -Name "V8CacheOptions" -Value 2 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "BackgroundModeEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "HardwareAccelerationModeEnabled" -Value 1 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "DiskCacheSize" -Value 104857600 -Type DWord -Force
+    
+    # 隐私和安全优化
     Set-ItemProperty -Path $regPath -Name "MetricsReportingEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "SpellCheckServiceEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "SearchSuggestEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "DNSPrefetchingEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "SafeBrowsingEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "PasswordManagerEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "UrlKeyedAnonymizedDataCollectionEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "UserFeedbackAllowed" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "ChromeCleanupEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "ChromeCleanupReportingEnabled" -Value 0 -Type DWord -Force
     
-    $script:reportData += @{Browser="Chrome"; Method="注册表策略"; Features="V8引擎优化、硬件加速"; Status="✓"}
+    # 禁用默认浏览器检查和提示
+    Set-ItemProperty -Path $regPath -Name "DefaultBrowserSettingEnabled" -Value 0 -Type DWord -Force
+    
+    # 书签栏默认显示
+    Set-ItemProperty -Path $regPath -Name "BookmarkBarEnabled" -Value 1 -Type DWord -Force
+    
+    # 主页和新标签页设置为空白页
+    Set-ItemProperty -Path $regPath -Name "HomepageIsNewTabPage" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "NewTabPageLocation" -Value "about:blank" -Type String -Force
+    Set-ItemProperty -Path $regPath -Name "RestoreOnStartup" -Value 5 -Type DWord -Force
+    
+    # 禁用新闻、广告、促销
+    Set-ItemProperty -Path $regPath -Name "PromotionalTabsEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "ShowCastIconInToolbar" -Value 0 -Type DWord -Force
+    
+    # 增强追踪保护
+    Set-ItemProperty -Path $regPath -Name "BlockThirdPartyCookies" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "EnableMediaRouter" -Value 0 -Type DWord -Force
+    
+    # WebRTC IP泄漏防护
+    Set-ItemProperty -Path $regPath -Name "WebRtcIPHandling" -Value "default_public_interface_only" -Type String -Force
+    
+    $script:reportData += @{Browser="Chrome"; Method="注册表策略"; Features="V8引擎优化、硬件加速、极致隐私"; Status="✓"}
     Write-Host "[✓] Chrome 优化完成" -ForegroundColor Green
 }
 
@@ -118,12 +147,32 @@ function Optimize-Chromium {
     $regPath = "HKLM:\SOFTWARE\Policies\Chromium"
     if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }
     
+    # 性能优化
     Set-ItemProperty -Path $regPath -Name "BackgroundModeEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "HardwareAccelerationModeEnabled" -Value 1 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "DiskCacheSize" -Value 104857600 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "MetricsReportingEnabled" -Value 0 -Type DWord -Force
     
-    $script:reportData += @{Browser="Chromium"; Method="注册表策略"; Features="开源版、无遥测"; Status="✓"}
+    # 禁用默认浏览器检查
+    Set-ItemProperty -Path $regPath -Name "DefaultBrowserSettingEnabled" -Value 0 -Type DWord -Force
+    
+    # 书签栏默认显示
+    Set-ItemProperty -Path $regPath -Name "BookmarkBarEnabled" -Value 1 -Type DWord -Force
+    
+    # 主页和新标签页设置
+    Set-ItemProperty -Path $regPath -Name "HomepageIsNewTabPage" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "NewTabPageLocation" -Value "about:blank" -Type String -Force
+    Set-ItemProperty -Path $regPath -Name "RestoreOnStartup" -Value 5 -Type DWord -Force
+    
+    # 隐私保护
+    Set-ItemProperty -Path $regPath -Name "BlockThirdPartyCookies" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "DNSPrefetchingEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "SafeBrowsingEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "PasswordManagerEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "PromotionalTabsEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "WebRtcIPHandling" -Value "default_public_interface_only" -Type String -Force
+    
+    $script:reportData += @{Browser="Chromium"; Method="注册表策略"; Features="开源版、无遥测、极致隐私"; Status="✓"}
     Write-Host "[✓] Chromium 优化完成" -ForegroundColor Green
 }
 
@@ -142,23 +191,75 @@ function Optimize-Firefox {
         $userFile = "$($profile.FullName)\user.js"
         
         $prefs = @"
+// ═══════════════════════════════════════════════════════════
 // Gecko 引擎性能优化
+// ═══════════════════════════════════════════════════════════
 user_pref("browser.cache.disk.capacity", 102400);
 user_pref("browser.cache.memory.capacity", 51200);
 user_pref("network.http.max-connections", 256);
 user_pref("gfx.webrender.all", true);
 user_pref("layers.acceleration.force-enabled", true);
+
+// ═══════════════════════════════════════════════════════════
+// 书签栏和主页设置
+// ═══════════════════════════════════════════════════════════
+user_pref("browser.toolbars.bookmarks.visibility", "always");
+user_pref("browser.startup.homepage", "about:blank");
+user_pref("browser.newtabpage.enabled", false);
+user_pref("browser.startup.page", 1);
+
+// ═══════════════════════════════════════════════════════════
+// 禁用默认浏览器检查
+// ═══════════════════════════════════════════════════════════
+user_pref("browser.shell.checkDefaultBrowser", false);
+
+// ═══════════════════════════════════════════════════════════
+// 书签在新标签页打开
+// ═══════════════════════════════════════════════════════════
+user_pref("browser.tabs.loadBookmarksInTabs", true);
+
+// ═══════════════════════════════════════════════════════════
+// 禁用新闻、广告、推荐
+// ═══════════════════════════════════════════════════════════
+user_pref("browser.newtabpage.activity-stream.feeds.section.topstories", false);
+user_pref("browser.newtabpage.activity-stream.feeds.snippets", false);
+user_pref("browser.newtabpage.activity-stream.showSponsored", false);
+user_pref("browser.newtabpage.activity-stream.showSponsoredTopSites", false);
+user_pref("browser.newtabpage.activity-stream.section.highlights.includePocket", false);
+
+// ═══════════════════════════════════════════════════════════
+// 隐私和追踪保护
+// ═══════════════════════════════════════════════════════════
 user_pref("privacy.trackingprotection.enabled", true);
-user_pref("privacy.resistFingerprinting", true);
-user_pref("webgl.disabled", true);
+user_pref("privacy.trackingprotection.socialtracking.enabled", true);
+user_pref("privacy.donottrackheader.enabled", true);
+user_pref("privacy.resistFingerprinting", false);
+user_pref("privacy.firstparty.isolate", true);
+user_pref("webgl.disabled", false);
 user_pref("media.peerconnection.enabled", false);
+user_pref("network.dns.disablePrefetch", true);
+user_pref("network.prefetch-next", false);
+user_pref("beacon.enabled", false);
+
+// ═══════════════════════════════════════════════════════════
+// 禁用遥测和数据收集
+// ═══════════════════════════════════════════════════════════
+user_pref("datareporting.healthreport.uploadEnabled", false);
+user_pref("datareporting.policy.dataSubmissionEnabled", false);
+user_pref("toolkit.telemetry.enabled", false);
+user_pref("toolkit.telemetry.unified", false);
+user_pref("toolkit.telemetry.archive.enabled", false);
+
+// ═══════════════════════════════════════════════════════════
+// 双击关闭标签页
+// ═══════════════════════════════════════════════════════════
 user_pref("browser.tabs.closeTabByDblclick", true);
 "@
         
         $prefs | Out-File -FilePath $userFile -Encoding UTF8 -Force
     }
     
-    $script:reportData += @{Browser="Firefox"; Method="user.js配置"; Features="Gecko引擎、WebRender"; Status="✓"}
+    $script:reportData += @{Browser="Firefox"; Method="user.js配置"; Features="Gecko引擎、WebRender、极致隐私"; Status="✓"}
     Write-Host "[✓] Firefox 优化完成" -ForegroundColor Green
 }
 
@@ -169,14 +270,52 @@ function Optimize-Edge {
     $regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"
     if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }
     
+    # 禁用 Microsoft 特有服务
     Set-ItemProperty -Path $regPath -Name "StartupBoostEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "EdgeShoppingAssistantEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "EdgeCollectionsEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "EdgeEnhanceImagesEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "EdgeAssetDeliveryServiceEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "PersonalizationReportingEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "ShowMicrosoftRewards" -Value 0 -Type DWord -Force
+    
+    # 性能优化
     Set-ItemProperty -Path $regPath -Name "BackgroundModeEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "HardwareAccelerationModeEnabled" -Value 1 -Type DWord -Force
+    
+    # 隐私和追踪保护
     Set-ItemProperty -Path $regPath -Name "TrackingPrevention" -Value 2 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "BlockThirdPartyCookies" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "DNSInterceptionChecksEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "ResolveNavigationErrorsUseWebService" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "AlternateErrorPagesEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "SpellcheckEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "SearchSuggestEnabled" -Value 0 -Type DWord -Force
+    
+    # 禁用默认浏览器检查
+    Set-ItemProperty -Path $regPath -Name "DefaultBrowserSettingEnabled" -Value 0 -Type DWord -Force
+    
+    # 书签栏默认显示
+    Set-ItemProperty -Path $regPath -Name "FavoritesBarEnabled" -Value 1 -Type DWord -Force
+    
+    # 主页和新标签页设置
+    Set-ItemProperty -Path $regPath -Name "HomepageIsNewTabPage" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "NewTabPageLocation" -Value "about:blank" -Type String -Force
+    Set-ItemProperty -Path $regPath -Name "RestoreOnStartup" -Value 5 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "NewTabPageContentEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "NewTabPageQuickLinksEnabled" -Value 0 -Type DWord -Force
+    
+    # 禁用新闻和促销
+    Set-ItemProperty -Path $regPath -Name "PromotionalTabsEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "ShowCastIconInToolbar" -Value 0 -Type DWord -Force
+    
+    # WebRTC IP泄漏防护
+    Set-ItemProperty -Path $regPath -Name "WebRtcIPHandling" -Value "default_public_interface_only" -Type String -Force
+    
+    # 双击关闭标签页
     Set-ItemProperty -Path $regPath -Name "DoubleClickCloseTabEnabled" -Value 1 -Type DWord -Force
     
-    $script:reportData += @{Browser="Edge"; Method="Microsoft注册表"; Features="禁用StartupBoost、双击关闭"; Status="✓"}
+    $script:reportData += @{Browser="Edge"; Method="Microsoft注册表"; Features="禁用所有MS服务、极致隐私、双击关闭"; Status="✓"}
     Write-Host "[✓] Edge 优化完成" -ForegroundColor Green
 }
 
@@ -187,11 +326,31 @@ function Optimize-Brave {
     $regPath = "HKLM:\SOFTWARE\Policies\BraveSoftware\Brave"
     if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }
     
+    # 性能优化
     Set-ItemProperty -Path $regPath -Name "BackgroundModeEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "HardwareAccelerationModeEnabled" -Value 1 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "MetricsReportingEnabled" -Value 0 -Type DWord -Force
     
-    $script:reportData += @{Browser="Brave"; Method="注册表策略"; Features="内置Shields"; Status="✓"}
+    # 禁用默认浏览器检查
+    Set-ItemProperty -Path $regPath -Name "DefaultBrowserSettingEnabled" -Value 0 -Type DWord -Force
+    
+    # 书签栏默认显示
+    Set-ItemProperty -Path $regPath -Name "BookmarkBarEnabled" -Value 1 -Type DWord -Force
+    
+    # 主页和新标签页设置
+    Set-ItemProperty -Path $regPath -Name "HomepageIsNewTabPage" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "NewTabPageLocation" -Value "about:blank" -Type String -Force
+    Set-ItemProperty -Path $regPath -Name "RestoreOnStartup" -Value 5 -Type DWord -Force
+    
+    # 隐私保护
+    Set-ItemProperty -Path $regPath -Name "BlockThirdPartyCookies" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "DNSPrefetchingEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "SafeBrowsingEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "PasswordManagerEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "PromotionalTabsEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "WebRtcIPHandling" -Value "default_public_interface_only" -Type String -Force
+    
+    $script:reportData += @{Browser="Brave"; Method="注册表策略"; Features="内置Shields、极致隐私"; Status="✓"}
     Write-Host "[✓] Brave 优化完成" -ForegroundColor Green
 }
 
@@ -202,10 +361,31 @@ function Optimize-Opera {
     $regPath = "HKLM:\SOFTWARE\Policies\Opera Software\Opera Stable"
     if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }
     
+    # 性能优化
     Set-ItemProperty -Path $regPath -Name "BackgroundModeEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "HardwareAccelerationModeEnabled" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "MetricsReportingEnabled" -Value 0 -Type DWord -Force
     
-    $script:reportData += @{Browser="Opera"; Method="注册表策略"; Features="内置VPN"; Status="✓"}
+    # 禁用默认浏览器检查
+    Set-ItemProperty -Path $regPath -Name "DefaultBrowserSettingEnabled" -Value 0 -Type DWord -Force
+    
+    # 书签栏默认显示
+    Set-ItemProperty -Path $regPath -Name "BookmarkBarEnabled" -Value 1 -Type DWord -Force
+    
+    # 主页和新标签页设置
+    Set-ItemProperty -Path $regPath -Name "HomepageIsNewTabPage" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "NewTabPageLocation" -Value "about:blank" -Type String -Force
+    Set-ItemProperty -Path $regPath -Name "RestoreOnStartup" -Value 5 -Type DWord -Force
+    
+    # 隐私保护
+    Set-ItemProperty -Path $regPath -Name "BlockThirdPartyCookies" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "DNSPrefetchingEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "SafeBrowsingEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "PasswordManagerEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "PromotionalTabsEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "WebRtcIPHandling" -Value "default_public_interface_only" -Type String -Force
+    
+    $script:reportData += @{Browser="Opera"; Method="注册表策略"; Features="内置VPN、极致隐私"; Status="✓"}
     Write-Host "[✓] Opera 优化完成" -ForegroundColor Green
 }
 
@@ -216,8 +396,29 @@ function Optimize-Vivaldi {
     $regPath = "HKLM:\SOFTWARE\Policies\Vivaldi"
     if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }
     
+    # 性能优化
     Set-ItemProperty -Path $regPath -Name "BackgroundModeEnabled" -Value 0 -Type DWord -Force
     Set-ItemProperty -Path $regPath -Name "HardwareAccelerationModeEnabled" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "MetricsReportingEnabled" -Value 0 -Type DWord -Force
+    
+    # 禁用默认浏览器检查
+    Set-ItemProperty -Path $regPath -Name "DefaultBrowserSettingEnabled" -Value 0 -Type DWord -Force
+    
+    # 书签栏默认显示
+    Set-ItemProperty -Path $regPath -Name "BookmarkBarEnabled" -Value 1 -Type DWord -Force
+    
+    # 主页和新标签页设置
+    Set-ItemProperty -Path $regPath -Name "HomepageIsNewTabPage" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "NewTabPageLocation" -Value "about:blank" -Type String -Force
+    Set-ItemProperty -Path $regPath -Name "RestoreOnStartup" -Value 5 -Type DWord -Force
+    
+    # 隐私保护
+    Set-ItemProperty -Path $regPath -Name "BlockThirdPartyCookies" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "DNSPrefetchingEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "SafeBrowsingEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "PasswordManagerEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "PromotionalTabsEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $regPath -Name "WebRtcIPHandling" -Value "default_public_interface_only" -Type String -Force
     
     # Vivaldi 双击关闭配置
     $vivaldiPrefsPath = "$env:LOCALAPPDATA\Vivaldi\User Data\Default\Preferences"
@@ -228,10 +429,12 @@ function Optimize-Vivaldi {
             if (-not $prefs.vivaldi.tabs) { $prefs.vivaldi | Add-Member -MemberType NoteProperty -Name "tabs" -Value @{} }
             $prefs.vivaldi.tabs.close_on_double_click = $true
             $prefs | ConvertTo-Json -Depth 100 | Set-Content $vivaldiPrefsPath -Force
-        } catch {}
+        } catch {
+            Write-Host "[!] Vivaldi Preferences 配置失败，跳过" -ForegroundColor Yellow
+        }
     }
     
-    $script:reportData += @{Browser="Vivaldi"; Method="注册表+配置文件"; Features="双击关闭、UI定制"; Status="✓"}
+    $script:reportData += @{Browser="Vivaldi"; Method="注册表+配置文件"; Features="双击关闭、极致隐私"; Status="✓"}
     Write-Host "[✓] Vivaldi 优化完成" -ForegroundColor Green
 }
 
@@ -251,19 +454,58 @@ function Optimize-LibreWolf {
         $userFile = "$($profile.FullName)\user.js"
         
         $prefs = @"
+// ═══════════════════════════════════════════════════════════
 // LibreWolf 性能优化
+// ═══════════════════════════════════════════════════════════
 user_pref("browser.cache.disk.capacity", 102400);
 user_pref("browser.cache.memory.capacity", 51200);
 user_pref("network.http.max-connections", 256);
 user_pref("gfx.webrender.all", true);
 user_pref("layers.acceleration.force-enabled", true);
+
+// ═══════════════════════════════════════════════════════════
+// 书签栏和主页设置
+// ═══════════════════════════════════════════════════════════
+user_pref("browser.toolbars.bookmarks.visibility", "always");
+user_pref("browser.startup.homepage", "about:blank");
+user_pref("browser.newtabpage.enabled", false);
+user_pref("browser.startup.page", 1);
+
+// ═══════════════════════════════════════════════════════════
+// 禁用默认浏览器检查
+// ═══════════════════════════════════════════════════════════
+user_pref("browser.shell.checkDefaultBrowser", false);
+
+// ═══════════════════════════════════════════════════════════
+// 书签在新标签页打开
+// ═══════════════════════════════════════════════════════════
+user_pref("browser.tabs.loadBookmarksInTabs", true);
+
+// ═══════════════════════════════════════════════════════════
+// 禁用新闻、广告、推荐
+// ═══════════════════════════════════════════════════════════
+user_pref("browser.newtabpage.activity-stream.feeds.section.topstories", false);
+user_pref("browser.newtabpage.activity-stream.feeds.snippets", false);
+user_pref("browser.newtabpage.activity-stream.showSponsored", false);
+user_pref("browser.newtabpage.activity-stream.showSponsoredTopSites", false);
+
+// ═══════════════════════════════════════════════════════════
+// 隐私保护（LibreWolf已预配置，这里微调）
+// ═══════════════════════════════════════════════════════════
+user_pref("privacy.resistFingerprinting", false);
+user_pref("webgl.disabled", false);
+user_pref("media.peerconnection.enabled", false);
+
+// ═══════════════════════════════════════════════════════════
+// 双击关闭标签页
+// ═══════════════════════════════════════════════════════════
 user_pref("browser.tabs.closeTabByDblclick", true);
 "@
         
         $prefs | Out-File -FilePath $userFile -Encoding UTF8 -Force
     }
     
-    $script:reportData += @{Browser="LibreWolf"; Method="user.js配置"; Features="Firefox ESR、双击关闭"; Status="✓"}
+    $script:reportData += @{Browser="LibreWolf"; Method="user.js配置"; Features="Firefox ESR、极致隐私、双击关闭"; Status="✓"}
     Write-Host "[✓] LibreWolf 优化完成" -ForegroundColor Green
 }
 
@@ -302,10 +544,24 @@ foreach ($config in $browserConfigs) {
         $profileDir = "$baseDir\$($config.Name)"
         if (-not (Test-Path $profileDir)) { New-Item -ItemType Directory -Path $profileDir -Force | Out-Null }
         
+        # 生成真实的美国用户指纹参数
+        $index = [array]::IndexOf($browserConfigs.Name, $config.Name)
+        $resolutions = @(
+            @{W=1920;H=1080;S=1.0}, @{W=1366;H=768;S=1.0}, @{W=2560;H=1440;S=1.0}, @{W=1536;H=864;S=1.25},
+            @{W=1440;H=900;S=1.0}, @{W=1600;H=900;S=1.0}, @{W=3840;H=2160;S=1.5}, @{W=2880;H=1800;S=2.0}
+        )
+        $res = $resolutions[$index % $resolutions.Count]
+        
+        # 复制指纹保护脚本到浏览器配置目录
+        $scriptSource = "$PSScriptRoot\canvas_fingerprint_protection.js"
+        if (Test-Path $scriptSource) {
+            Copy-Item -Path $scriptSource -Destination "$profileDir\fingerprint_protection.js" -Force
+        }
+        
         $launchScript = "$baseDir\Launch_$($config.Name).bat"
         @"
 @echo off
-start "" "$exePath" --user-data-dir="$profileDir" --proxy-server=127.0.0.1:$($config.Port) --disable-blink-features=AutomationControlled --timezone="$($config.Timezone)"
+start "" "$exePath" --user-data-dir="$profileDir" --proxy-server=127.0.0.1:$($config.Port) --timezone="$($config.Timezone)" --disable-blink-features=AutomationControlled --window-size=$($res.W),$($res.H) --force-device-scale-factor=$($res.S) --lang=en-US --no-first-run --no-default-browser-check --disable-features=IsolateOrigins,site-per-process --disable-site-isolation-trials
 "@ | Out-File -FilePath $launchScript -Encoding ASCII -Force
     }
 }
