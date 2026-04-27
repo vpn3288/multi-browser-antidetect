@@ -37,6 +37,8 @@ $browsers = @{
         PolicyPath = "HKLM:\SOFTWARE\Policies\Mozilla\Firefox"
         ProfilePath = "C:\BrowserProfiles\Firefox"
         ExpectedExtensions = 4
+        UsesJSON = $true
+        JSONPath = "C:\Program Files\Mozilla Firefox\distribution\policies.json"
     }
     "Brave" = @{
         Paths = @(
@@ -85,6 +87,8 @@ $browsers = @{
         PolicyPath = "HKLM:\SOFTWARE\Policies\LibreWolf"
         ProfilePath = "C:\BrowserProfiles\LibreWolf"
         ExpectedExtensions = 4
+        UsesJSON = $true
+        JSONPath = "C:\Program Files\LibreWolf\distribution\policies.json"
     }
 }
 
@@ -130,50 +134,92 @@ foreach ($browserName in $browsers.Keys) {
         continue
     }
     
-    # 2. 检查注册表策略
-    Write-Host "`n[2/5] 检查注册表策略..." -ForegroundColor Yellow
-    if (Test-Path $browser.PolicyPath) {
-        $result.PolicyConfigured = $true
-        Write-Host "  [✓] 策略已配置: $($browser.PolicyPath)" -ForegroundColor Green
-        
-        # 列出关键策略
-        $policies = Get-ItemProperty -Path $browser.PolicyPath -ErrorAction SilentlyContinue
-        if ($policies) {
-            $policyCount = ($policies.PSObject.Properties | Where-Object { $_.Name -notlike "PS*" }).Count
-            Write-Host "  [i] 策略数量: $policyCount" -ForegroundColor Cyan
+    # 2. 检查策略配置
+    Write-Host "`n[2/5] 检查策略配置..." -ForegroundColor Yellow
+    
+    if ($browser.UsesJSON) {
+        # Firefox 系浏览器检查 JSON 文件
+        if (Test-Path $browser.JSONPath) {
+            try {
+                $policiesJson = Get-Content $browser.JSONPath -Raw | ConvertFrom-Json
+                if ($policiesJson.policies) {
+                    $result.PolicyConfigured = $true
+                    $policyCount = ($policiesJson.policies.PSObject.Properties).Count
+                    Write-Host "  [✓] 策略已配置: $($browser.JSONPath)" -ForegroundColor Green
+                    Write-Host "  [i] 策略数量: $policyCount" -ForegroundColor Cyan
+                } else {
+                    Write-Host "  [✗] policies.json 格式错误" -ForegroundColor Red
+                    $result.Issues += "policies.json 格式错误"
+                }
+            } catch {
+                Write-Host "  [✗] 无法解析 policies.json: $($_.Exception.Message)" -ForegroundColor Red
+                $result.Issues += "policies.json 解析失败"
+            }
+        } else {
+            Write-Host "  [✗] policies.json 不存在" -ForegroundColor Red
+            $result.Issues += "policies.json 不存在"
         }
     } else {
-        Write-Host "  [✗] 策略未配置" -ForegroundColor Red
-        $result.Issues += "注册表策略未配置"
+        # Chromium 系浏览器检查注册表
+        if (Test-Path $browser.PolicyPath) {
+            $result.PolicyConfigured = $true
+            Write-Host "  [✓] 策略已配置: $($browser.PolicyPath)" -ForegroundColor Green
+            
+            # 列出关键策略
+            $policies = Get-ItemProperty -Path $browser.PolicyPath -ErrorAction SilentlyContinue
+            if ($policies) {
+                $policyCount = ($policies.PSObject.Properties | Where-Object { $_.Name -notlike "PS*" }).Count
+                Write-Host "  [i] 策略数量: $policyCount" -ForegroundColor Cyan
+            }
+        } else {
+            Write-Host "  [✗] 策略未配置" -ForegroundColor Red
+            $result.Issues += "注册表策略未配置"
+        }
     }
     
     # 3. 检查扩展配置
     Write-Host "`n[3/5] 检查扩展配置..." -ForegroundColor Yellow
     
-    if ($browserName -eq "Firefox" -or $browserName -eq "LibreWolf") {
-        # Firefox 系浏览器检查 distribution 文件
-        $distributionPath = Split-Path $result.InstallPath
-        $distributionFile = Join-Path $distributionPath "distribution\policies.json"
-        
-        if (Test-Path $distributionFile) {
+    if ($browser.UsesJSON) {
+        # Firefox 系浏览器检查 JSON 文件中的 ExtensionSettings
+        if (Test-Path $browser.JSONPath) {
             try {
-                $policiesJson = Get-Content $distributionFile -Raw | ConvertFrom-Json
-                if ($policiesJson.policies.Extensions.Install) {
-                    $result.ExtensionCount = $policiesJson.policies.Extensions.Install.Count
-                    $result.ExtensionsConfigured = $true
-                    Write-Host "  [✓] 扩展已配置: $($result.ExtensionCount) 个" -ForegroundColor Green
+                $policiesJson = Get-Content $browser.JSONPath -Raw | ConvertFrom-Json
+                if ($policiesJson.policies.ExtensionSettings) {
+                    # 计算强制安装的扩展数量（排除 "*" 通配符）
+                    $extensionCount = 0
+                    $policiesJson.policies.ExtensionSettings.PSObject.Properties | ForEach-Object {
+                        if ($_.Name -ne "*" -and $_.Value.installation_mode -eq "force_installed") {
+                            $extensionCount++
+                        }
+                    }
                     
-                    if ($result.ExtensionCount -eq $browser.ExpectedExtensions) {
+                    $result.ExtensionCount = $extensionCount
+                    $result.ExtensionsConfigured = $true
+                    Write-Host "  [✓] 扩展已配置: $extensionCount 个" -ForegroundColor Green
+                    
+                    if ($extensionCount -eq $browser.ExpectedExtensions) {
                         Write-Host "  [✓] 扩展数量正确" -ForegroundColor Green
                         $extensionsOkCount++
                     } else {
-                        Write-Host "  [!] 扩展数量不匹配: 期望 $($browser.ExpectedExtensions), 实际 $($result.ExtensionCount)" -ForegroundColor Yellow
+                        Write-Host "  [!] 扩展数量不匹配: 期望 $($browser.ExpectedExtensions), 实际 $extensionCount" -ForegroundColor Yellow
                         $result.Issues += "扩展数量不匹配"
                     }
+                    
+                    # 列出扩展
+                    Write-Host "  [i] 已配置的扩展：" -ForegroundColor Cyan
+                    $policiesJson.policies.ExtensionSettings.PSObject.Properties | ForEach-Object {
+                        if ($_.Name -ne "*") {
+                            Write-Host "      $($_.Name)" -ForegroundColor Gray
+                        }
+                    }
+                } else {
+                    Write-Host "  [✗] ExtensionSettings 未配置" -ForegroundColor Red
+                    $result.Issues += "扩展未配置"
                 }
             } catch {
-                Write-Host "  [✗] 无法解析 policies.json" -ForegroundColor Red
-                $result.Issues += "policies.json 解析失败"
+                Write-Host "  [✗] 无法解析扩展配置" -ForegroundColor Red
+                $result.Issues += "扩展配置解析失败"
             }
         } else {
             Write-Host "  [✗] policies.json 不存在" -ForegroundColor Red
