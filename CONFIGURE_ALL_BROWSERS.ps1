@@ -18,46 +18,99 @@ Write-Host ""
 Write-Host "[1/3] 检测已安装的浏览器..." -ForegroundColor Yellow
 Write-Host ""
 
+# 智能路径检测函数
+function Find-BrowserPath {
+    param(
+        [string[]]$PossiblePaths
+    )
+    foreach ($path in $PossiblePaths) {
+        $expandedPath = [System.Environment]::ExpandEnvironmentVariables($path)
+        if (Test-Path $expandedPath) {
+            return $expandedPath
+        }
+    }
+    return $null
+}
+
 $Browsers = @{
     "Chrome" = @{
-        "Path" = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+        "Paths" = @(
+            "C:\Program Files\Google\Chrome\Application\chrome.exe",
+            "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+            "%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe"
+        )
         "Script" = ".\CHROME_ENTERPRISE_CONFIG.ps1"
         "Installed" = $false
+        "Path" = $null
     }
     "Chromium" = @{
-        "Path" = "$env:LOCALAPPDATA\Chromium\Application\chrome.exe"
+        "Paths" = @(
+            "%LOCALAPPDATA%\Chromium\Application\chrome.exe",
+            "C:\Program Files\Chromium\Application\chrome.exe",
+            "C:\Program Files (x86)\Chromium\Application\chrome.exe"
+        )
         "Script" = ".\CHROMIUM_ENTERPRISE_CONFIG.ps1"
         "Installed" = $false
+        "Path" = $null
     }
     "Edge" = @{
-        "Path" = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+        "Paths" = @(
+            "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+            "C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+        )
         "Script" = ".\EDGE_ENTERPRISE_CONFIG.ps1"
         "Installed" = $false
+        "Path" = $null
     }
     "Firefox" = @{
-        "Path" = "C:\Program Files\Mozilla Firefox\firefox.exe"
+        "Paths" = @(
+            "C:\Program Files\Mozilla Firefox\firefox.exe",
+            "C:\Program Files (x86)\Mozilla Firefox\firefox.exe",
+            "%LOCALAPPDATA%\Mozilla Firefox\firefox.exe"
+        )
         "Script" = ".\FIREFOX_ENTERPRISE_CONFIG.ps1"
         "Installed" = $false
+        "Path" = $null
     }
     "Brave" = @{
-        "Path" = "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
+        "Paths" = @(
+            "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe",
+            "C:\Program Files (x86)\BraveSoftware\Brave-Browser\Application\brave.exe",
+            "%LOCALAPPDATA%\BraveSoftware\Brave-Browser\Application\brave.exe"
+        )
         "Script" = ".\BRAVE_ENTERPRISE_CONFIG.ps1"
         "Installed" = $false
+        "Path" = $null
     }
     "Vivaldi" = @{
-        "Path" = "$env:LOCALAPPDATA\Vivaldi\Application\vivaldi.exe"
+        "Paths" = @(
+            "%LOCALAPPDATA%\Vivaldi\Application\vivaldi.exe",
+            "C:\Program Files\Vivaldi\Application\vivaldi.exe",
+            "C:\Program Files (x86)\Vivaldi\Application\vivaldi.exe"
+        )
         "Script" = ".\VIVALDI_ENTERPRISE_CONFIG.ps1"
         "Installed" = $false
+        "Path" = $null
     }
     "LibreWolf" = @{
-        "Path" = "C:\Program Files\LibreWolf\librewolf.exe"
+        "Paths" = @(
+            "C:\Program Files\LibreWolf\librewolf.exe",
+            "C:\Program Files (x86)\LibreWolf\librewolf.exe",
+            "%LOCALAPPDATA%\LibreWolf\librewolf.exe"
+        )
         "Script" = ".\LIBREWOLF_ENTERPRISE_CONFIG.ps1"
         "Installed" = $false
+        "Path" = $null
     }
     "Opera" = @{
-        "Path" = "$env:LOCALAPPDATA\Programs\Opera\opera.exe"
+        "Paths" = @(
+            "%LOCALAPPDATA%\Programs\Opera\opera.exe",
+            "C:\Program Files\Opera\launcher.exe",
+            "C:\Program Files (x86)\Opera\launcher.exe"
+        )
         "Script" = ".\OPERA_AUTO_CONFIG.ps1"
         "Installed" = $false
+        "Path" = $null
     }
 }
 
@@ -65,10 +118,11 @@ $InstalledBrowsers = @()
 
 foreach ($browser in $Browsers.GetEnumerator()) {
     $name = $browser.Key
-    $path = $browser.Value.Path
+    $foundPath = Find-BrowserPath -PossiblePaths $browser.Value.Paths
     
-    if (Test-Path $path) {
+    if ($foundPath) {
         $Browsers[$name].Installed = $true
+        $Browsers[$name].Path = $foundPath
         $InstalledBrowsers += $name
         Write-Host "  [✓] $name" -ForegroundColor Green
     } else {
