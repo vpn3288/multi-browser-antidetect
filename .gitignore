@@ -1,13 +1,49 @@
-# 浏览器配置文件（包含个人数据）
-C:\BrowserProfiles/
-
-# 临时文件
-*.log
-*.tmp
-
-# 用户配置
-config.local.json
-
 # Windows
 Thumbs.db
-desktop.ini
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# PowerShell
+*.ps1~
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+*.env
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Test files
+test_*.ps1
+TEST_*.ps1
+*_test.ps1
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# Browser profiles (user data)
+profiles/
+BrowserProfiles/
+
+# Old/deprecated scripts
+old/
+deprecated/
+archive/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation drafts
+*.draft.md
