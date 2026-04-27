@@ -10,14 +10,31 @@ Write-Host "══════════════════════�
 Write-Host "  Opera 自动化配置 - 基于官方企业策略" -ForegroundColor Cyan
 Write-Host "════════════════════════════════════════════════════════════════" -ForegroundColor Cyan
 
-# Opera 路径
-$operaExe = "$env:LOCALAPPDATA\Programs\Opera\opera.exe"
+# Opera 路径（智能检测）
+$operaExePaths = @(
+    "$env:LOCALAPPDATA\Programs\Opera\opera.exe",
+    "C:\Program Files\Opera\launcher.exe",
+    "C:\Program Files (x86)\Opera\launcher.exe"
+)
+
+$operaExe = $null
+foreach ($path in $operaExePaths) {
+    if (Test-Path $path) {
+        $operaExe = $path
+        break
+    }
+}
+
 $operaProfile = "C:\BrowserProfiles\Opera"
 $operaStableProfile = "$env:APPDATA\Opera Software\Opera Stable"
 
 # 检查 Opera 是否安装
-if (-not (Test-Path $operaExe)) {
+if (-not $operaExe) {
     Write-Host "`n[!] 错误：Opera 未安装" -ForegroundColor Red
+    Write-Host "    已检查以下路径：" -ForegroundColor Yellow
+    foreach ($path in $operaExePaths) {
+        Write-Host "      - $path" -ForegroundColor Gray
+    }
     exit 1
 }
 
@@ -111,12 +128,16 @@ if (-not (Test-Path $extensionPolicyPath)) {
 # 需要启用 Chrome 扩展支持
 Set-ItemProperty -Path $operaPolicyPath -Name "ExtensionInstallSources" -Value @("https://chrome.google.com/webstore/*", "https://addons.opera.com/*") -Type MultiString
 
-# 扩展列表
+# 扩展列表（4个标准扩展）
 $extensions = @{
     # uBlock Origin
     1 = "cjpalhdlnbpafiamejdnhcphjbkeiagm;https://clients2.google.com/service/update2/crx"
-    # WebRTC Leak Shield
-    2 = "nphkkbaidamjmhfanlpblblcadhfbkdm;https://clients2.google.com/service/update2/crx"
+    # Privacy Badger
+    2 = "pkehgijcmpdhfbdbbnkijodmdjhbjlgp;https://clients2.google.com/service/update2/crx"
+    # HTTPS Everywhere
+    3 = "gcbommkclmclpchllfjekcdonpmejbdp;https://clients2.google.com/service/update2/crx"
+    # Decentraleyes
+    4 = "ldpochfccmkkmhdbclfhpagapcfdljkj;https://clients2.google.com/service/update2/crx"
 }
 
 foreach ($key in $extensions.Keys) {

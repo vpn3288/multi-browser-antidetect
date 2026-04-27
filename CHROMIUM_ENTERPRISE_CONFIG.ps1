@@ -235,13 +235,29 @@ if (-not (Test-Path $uBlockPath)) {
 Set-ItemProperty -Path $uBlockPath -Name "installation_mode" -Value "force_installed" -Type String -Force
 Set-ItemProperty -Path $uBlockPath -Name "update_url" -Value "https://clients2.google.com/service/update2/crx" -Type String -Force
 
-# WebRTC Leak Shield
-$WebRTCShieldPath = "$ExtensionSettingsPath\bppamachkoflopbagkdoflbgfjflfnfl"
-if (-not (Test-Path $WebRTCShieldPath)) {
-    New-Item -Path $WebRTCShieldPath -Force | Out-Null
+# Privacy Badger
+$PrivacyBadgerPath = "$ExtensionSettingsPath\pkehgijcmpdhfbdbbnkijodmdjhbjlgp"
+if (-not (Test-Path $PrivacyBadgerPath)) {
+    New-Item -Path $PrivacyBadgerPath -Force | Out-Null
 }
-Set-ItemProperty -Path $WebRTCShieldPath -Name "installation_mode" -Value "force_installed" -Type String -Force
-Set-ItemProperty -Path $WebRTCShieldPath -Name "update_url" -Value "https://clients2.google.com/service/update2/crx" -Type String -Force
+Set-ItemProperty -Path $PrivacyBadgerPath -Name "installation_mode" -Value "force_installed" -Type String -Force
+Set-ItemProperty -Path $PrivacyBadgerPath -Name "update_url" -Value "https://clients2.google.com/service/update2/crx" -Type String -Force
+
+# HTTPS Everywhere
+$HTTPSEverywherePath = "$ExtensionSettingsPath\gcbommkclmclpchllfjekcdonpmejbdp"
+if (-not (Test-Path $HTTPSEverywherePath)) {
+    New-Item -Path $HTTPSEverywherePath -Force | Out-Null
+}
+Set-ItemProperty -Path $HTTPSEverywherePath -Name "installation_mode" -Value "force_installed" -Type String -Force
+Set-ItemProperty -Path $HTTPSEverywherePath -Name "update_url" -Value "https://clients2.google.com/service/update2/crx" -Type String -Force
+
+# Decentraleyes
+$DecentraleyesPath = "$ExtensionSettingsPath\ldpochfccmkkmhdbclfhpagapcfdljkj"
+if (-not (Test-Path $DecentraleyesPath)) {
+    New-Item -Path $DecentraleyesPath -Force | Out-Null
+}
+Set-ItemProperty -Path $DecentraleyesPath -Name "installation_mode" -Value "force_installed" -Type String -Force
+Set-ItemProperty -Path $DecentraleyesPath -Name "update_url" -Value "https://clients2.google.com/service/update2/crx" -Type String -Force
 
 # 阻止其他扩展
 $BlockAllPath = "$ExtensionSettingsPath\*"
@@ -252,7 +268,9 @@ Set-ItemProperty -Path $BlockAllPath -Name "installation_mode" -Value "blocked" 
 
 Write-Host "  [✓] 已配置扩展安装源" -ForegroundColor Green
 Write-Host "  [✓] 已配置 uBlock Origin 自动安装" -ForegroundColor Green
-Write-Host "  [✓] 已配置 WebRTC Leak Shield 自动安装" -ForegroundColor Green
+Write-Host "  [✓] 已配置 Privacy Badger 自动安装" -ForegroundColor Green
+Write-Host "  [✓] 已配置 HTTPS Everywhere 自动安装" -ForegroundColor Green
+Write-Host "  [✓] 已配置 Decentraleyes 自动安装" -ForegroundColor Green
 Write-Host "  [✓] 已阻止其他扩展安装" -ForegroundColor Green
 
 # ============================================================================
