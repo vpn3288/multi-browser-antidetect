@@ -206,11 +206,11 @@ $browsers = @(
     @{Name="Chrome"; Path="C:\Program Files\Google\Chrome\Application\chrome.exe"; Port=7891},
     @{Name="Edge"; Path="C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"; Port=7892},
     @{Name="Brave"; Path="C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"; Port=7893},
-    @{Name="Firefox"; Path="C:\Program Files\Mozilla Firefox\firefox.exe"; Port=7894; Type="Firefox"},
-    @{Name="LibreWolf"; Path="C:\Program Files\LibreWolf\librewolf.exe"; Port=7895; Type="Firefox"},
+    @{Name="Vivaldi"; Path="$env:LOCALAPPDATA\Vivaldi\Application\vivaldi.exe"; Port=7894},
+    @{Name="Opera"; Path="$env:LOCALAPPDATA\Programs\Opera\opera.exe"; Port=7895},
     @{Name="Chromium"; Path="$env:LOCALAPPDATA\Chromium\Application\chrome.exe"; Port=7896},
-    @{Name="Vivaldi"; Path="$env:LOCALAPPDATA\Vivaldi\Application\vivaldi.exe"; Port=7897},
-    @{Name="Opera"; Path="$env:LOCALAPPDATA\Programs\Opera\opera.exe"; Port=7898}
+    @{Name="Firefox"; Path="C:\Program Files\Mozilla Firefox\firefox.exe"; Port=7897; Type="Firefox"},
+    @{Name="LibreWolf"; Path="C:\Program Files\LibreWolf\librewolf.exe"; Port=7898; Type="Firefox"}
 )
 
 foreach ($browser in $browsers) {
