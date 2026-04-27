@@ -2,203 +2,137 @@
 
 <#
 .SYNOPSIS
-    Multi-Browser Anti-Detect Deployment Script
+    Multi-Browser Anti-Detect Configuration
     
 .DESCRIPTION
-    Automated deployment of 8 privacy-focused browsers with:
-    - Unified installation to C:\Browsers
-    - Enterprise-grade privacy policies
-    - Individual fingerprint profiles
-    - SOCKS5 proxy configuration (ports 7891-7898)
-    - Official compliant configurations only
+    Configures 8 browsers with privacy protection and fingerprint differentiation
+    - Chrome, Edge, Brave, Chromium, Vivaldi, Opera (Chromium-based)
+    - Firefox, LibreWolf (Firefox-based)
     
 .NOTES
-    Version: 2.0
-    Repository: https://github.com/vpn3288/multi-browser-antidetect
+    Version: 3.0 Final
+    All configurations based on official documentation
 #>
 
 $ErrorActionPreference = "Stop"
-$ProgressPreference = "SilentlyContinue"
 
-# ============================================================================
+Write-Host ""
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "Multi-Browser Anti-Detect Setup v3.0" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host ""
+
 # Configuration
-# ============================================================================
+$ProfileRoot = "C:\BrowserProfiles"
 
-$Config = @{
-    BrowserRoot = "C:\Browsers"
-    ProfileRoot = "C:\BrowserProfiles"
-    ProxyBasePort = 7891
-    Language = "en-US"
-}
-
-$Browsers = @{
-    Chrome = @{
-        Name = "Google Chrome"
-        WingetId = "Google.Chrome"
-        Type = "Chromium"
-        PolicyPath = "HKLM:\SOFTWARE\Policies\Google\Chrome"
-    }
-    Edge = @{
-        Name = "Microsoft Edge"
-        WingetId = "Microsoft.Edge"
-        Type = "Chromium"
-        PolicyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"
-    }
-    Brave = @{
-        Name = "Brave"
-        WingetId = "Brave.Brave"
-        Type = "Chromium"
-        PolicyPath = "HKLM:\SOFTWARE\Policies\BraveSoftware\Brave"
-    }
-    Firefox = @{
-        Name = "Firefox"
-        WingetId = "Mozilla.Firefox"
-        Type = "Firefox"
-    }
-    LibreWolf = @{
-        Name = "LibreWolf"
-        WingetId = "LibreWolf.LibreWolf"
-        Type = "Firefox"
-    }
-    Chromium = @{
-        Name = "Chromium"
-        WingetId = "Hibbiki.Chromium"
-        Type = "Chromium"
-        PolicyPath = "HKLM:\SOFTWARE\Policies\Chromium"
-    }
-    Vivaldi = @{
-        Name = "Vivaldi"
-        WingetId = "VivaldiTechnologies.Vivaldi"
-        Type = "Chromium"
-        PolicyPath = "HKLM:\SOFTWARE\Policies\Vivaldi"
-    }
-    Opera = @{
-        Name = "Opera"
-        WingetId = "Opera.Opera"
-        Type = "Chromium"
-        PolicyPath = "HKLM:\SOFTWARE\Policies\Opera Software\Opera"
-    }
+# Create profile directory
+if (-not (Test-Path $ProfileRoot)) {
+    New-Item -ItemType Directory -Path $ProfileRoot -Force | Out-Null
 }
 
 # ============================================================================
-# Helper Functions
+# Chromium Browsers Configuration
 # ============================================================================
 
-function Write-Status {
-    param(
-        [string]$Message,
-        [ValidateSet("INFO", "SUCCESS", "WARN", "ERROR")]
-        [string]$Type = "INFO"
-    )
-    
-    $colors = @{
-        INFO = "Cyan"
-        SUCCESS = "Green"
-        WARN = "Yellow"
-        ERROR = "Red"
-    }
-    
-    $prefixes = @{
-        INFO = "[*]"
-        SUCCESS = "[✓]"
-        WARN = "[!]"
-        ERROR = "[✗]"
-    }
-    
-    Write-Host "$($prefixes[$Type]) $Message" -ForegroundColor $colors[$Type]
+$chromiumBrowsers = @{
+    "Chrome" = "HKLM:\SOFTWARE\Policies\Google\Chrome"
+    "Edge" = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"
+    "Brave" = "HKLM:\SOFTWARE\Policies\BraveSoftware\Brave"
+    "Chromium" = "HKLM:\SOFTWARE\Policies\Chromium"
+    "Vivaldi" = "HKLM:\SOFTWARE\Policies\Vivaldi"
+    "Opera" = "HKLM:\SOFTWARE\Policies\Opera Software\Opera"
 }
 
-function Set-RegistryPolicy {
-    param(
-        [string]$Path,
-        [string]$Name,
-        [object]$Value,
-        [string]$Type = "String"
-    )
+Write-Host "[1/3] Configuring Chromium-based browsers..." -ForegroundColor Yellow
+
+foreach ($name in $chromiumBrowsers.Keys) {
+    $path = $chromiumBrowsers[$name]
     
-    try {
-        if (-not (Test-Path $Path)) {
-            New-Item -Path $Path -Force | Out-Null
+    if (-not (Test-Path $path)) {
+        New-Item -Path $path -Force | Out-Null
+    }
+    
+    # Core privacy settings
+    Set-ItemProperty -Path $path -Name "BookmarkBarEnabled" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $path -Name "HomepageIsNewTabPage" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $path -Name "NewTabPageLocation" -Value "chrome://newtab" -Type String -Force
+    Set-ItemProperty -Path $path -Name "DefaultBrowserSettingEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $path -Name "MetricsReportingEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $path -Name "SearchSuggestEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $path -Name "BlockThirdPartyCookies" -Value 1 -Type DWord -Force
+    Set-ItemProperty -Path $path -Name "PasswordManagerEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $path -Name "PromotionalTabsEnabled" -Value 0 -Type DWord -Force
+    Set-ItemProperty -Path $path -Name "SyncDisabled" -Value 1 -Type DWord -Force
+    
+    # Critical: WebRTC IP protection
+    Set-ItemProperty -Path $path -Name "WebRtcIPHandlingPolicy" -Value "disable_non_proxied_udp" -Type String -Force
+    
+    # Critical: SafeBrowsing (keep enabled for legitimacy)
+    Set-ItemProperty -Path $path -Name "SafeBrowsingProtectionLevel" -Value 1 -Type DWord -Force
+    
+    Write-Host "  [OK] $name" -ForegroundColor Green
+}
+
+# ============================================================================
+# Firefox Browsers Configuration
+# ============================================================================
+
+Write-Host ""
+Write-Host "[2/3] Configuring Firefox-based browsers..." -ForegroundColor Yellow
+
+$firefoxBrowsers = @{
+    "Firefox" = "C:\Program Files\Mozilla Firefox"
+    "LibreWolf" = "C:\Program Files\LibreWolf"
+}
+
+$firefoxPolicies = @{
+    "policies" = @{
+        "DisplayBookmarksToolbar" = "always"
+        "Homepage" = @{
+            "URL" = "about:blank"
+            "Locked" = $true
+            "StartPage" = "none"
         }
-        Set-ItemProperty -Path $Path -Name $Name -Value $Value -Type $Type -Force
-        return $true
-    } catch {
-        Write-Status "Failed to set $Name : $($_.Exception.Message)" "ERROR"
-        return $false
+        "DontCheckDefaultBrowser" = $true
+        "DisableTelemetry" = $true
+        "DisableFirefoxStudies" = $true
+        "DisablePocket" = $true
+        "DisableFirefoxAccounts" = $true
+        "PasswordManagerEnabled" = $false
+        "SearchSuggestEnabled" = $false
+        "EnableTrackingProtection" = @{
+            "Value" = $true
+            "Locked" = $true
+            "Cryptomining" = $true
+            "Fingerprinting" = $true
+        }
+        "Cookies" = @{
+            "AcceptThirdParty" = "never"
+            "RejectTracker" = $true
+        }
+        "Preferences" = @{
+            "media.peerconnection.ice.default_address_only" = @{
+                "Value" = $true
+                "Status" = "locked"
+            }
+            "media.peerconnection.ice.no_host" = @{
+                "Value" = $true
+                "Status" = "locked"
+            }
+            "media.peerconnection.ice.proxy_only_if_behind_proxy" = @{
+                "Value" = $true
+                "Status" = "locked"
+            }
+        }
     }
 }
 
-function Install-Browser {
-    param($BrowserKey)
+foreach ($name in $firefoxBrowsers.Keys) {
+    $installPath = $firefoxBrowsers[$name]
     
-    $browser = $Browsers[$BrowserKey]
-    
-    Write-Status "Installing $($browser.Name)..." "INFO"
-    
-    try {
-        $result = winget install --id $browser.WingetId --silent --accept-package-agreements --accept-source-agreements 2>&1
-        Start-Sleep -Seconds 5
-        Write-Status "$($browser.Name) installed" "SUCCESS"
-        return $true
-    } catch {
-        Write-Status "Installation failed: $($_.Exception.Message)" "ERROR"
-        return $false
-    }
-}
-
-function Configure-ChromiumBrowser {
-    param($BrowserKey)
-    
-    $browser = $Browsers[$BrowserKey]
-    $path = $browser.PolicyPath
-    
-    Write-Status "Configuring $($browser.Name)..." "INFO"
-    
-    # UI Settings
-    Set-RegistryPolicy $path "BookmarkBarEnabled" 1 "DWord"
-    Set-RegistryPolicy $path "HomepageIsNewTabPage" 1 "DWord"
-    Set-RegistryPolicy $path "RestoreOnStartup" 5 "DWord"
-    Set-RegistryPolicy $path "ShowHomeButton" 0 "DWord"
-    
-    # Privacy
-    Set-RegistryPolicy $path "DefaultBrowserSettingEnabled" 0 "DWord"
-    Set-RegistryPolicy $path "MetricsReportingEnabled" 0 "DWord"
-    Set-RegistryPolicy $path "SearchSuggestEnabled" 0 "DWord"
-    Set-RegistryPolicy $path "AlternateErrorPagesEnabled" 0 "DWord"
-    Set-RegistryPolicy $path "NetworkPredictionOptions" 2 "DWord"
-    Set-RegistryPolicy $path "BlockThirdPartyCookies" 1 "DWord"
-    Set-RegistryPolicy $path "AutofillAddressEnabled" 0 "DWord"
-    Set-RegistryPolicy $path "AutofillCreditCardEnabled" 0 "DWord"
-    Set-RegistryPolicy $path "PasswordManagerEnabled" 0 "DWord"
-    
-    # Performance
-    Set-RegistryPolicy $path "HardwareAccelerationModeEnabled" 1 "DWord"
-    Set-RegistryPolicy $path "BackgroundModeEnabled" 0 "DWord"
-    
-    # Anti-Promotion
-    Set-RegistryPolicy $path "PromotionalTabsEnabled" 0 "DWord"
-    Set-RegistryPolicy $path "ShowCastIconInToolbar" 0 "DWord"
-    
-    # Edge-specific
-    if ($BrowserKey -eq "Edge") {
-        Set-RegistryPolicy $path "EdgeShoppingAssistantEnabled" 0 "DWord"
-        Set-RegistryPolicy $path "EdgeCollectionsEnabled" 0 "DWord"
-        Set-RegistryPolicy $path "HubsSidebarEnabled" 0 "DWord"
-        Set-RegistryPolicy $path "ShowMicrosoftRewards" 0 "DWord"
-    }
-    
-    Write-Status "$($browser.Name) configured" "SUCCESS"
-}
-
-function Configure-FirefoxBrowser {
-    param($BrowserKey)
-    
-    $browser = $Browsers[$BrowserKey]
-    $installPath = Get-FirefoxPath $BrowserKey
-    
-    if (-not $installPath) {
-        Write-Status "Firefox installation path not found" "ERROR"
-        return
+    if (-not (Test-Path $installPath)) {
+        Write-Host "  [SKIP] $name - Not installed" -ForegroundColor Yellow
+        continue
     }
     
     $policiesDir = Join-Path $installPath "distribution"
@@ -207,260 +141,87 @@ function Configure-FirefoxBrowser {
     }
     
     $policiesFile = Join-Path $policiesDir "policies.json"
+    $firefoxPolicies | ConvertTo-Json -Depth 10 | Out-File -FilePath $policiesFile -Encoding UTF8 -Force
     
-    $policies = @{
-        policies = @{
-            DisplayBookmarksToolbar = "always"
-            Homepage = @{
-                URL = "about:blank"
-                Locked = $true
-                StartPage = "none"
-            }
-            DontCheckDefaultBrowser = $true
-            DisableTelemetry = $true
-            DisableFirefoxStudies = $true
-            DisablePocket = $true
-            DisableFirefoxAccounts = $true
-            DisableFormHistory = $true
-            EnableTrackingProtection = @{
-                Value = $true
-                Locked = $true
-                Cryptomining = $true
-                Fingerprinting = $true
-            }
-            Cookies = @{
-                AcceptThirdParty = "never"
-                RejectTracker = $true
-            }
-            HardwareAcceleration = $true
-            SearchSuggestEnabled = $false
-            UserMessaging = @{
-                WhatsNew = $false
-                ExtensionRecommendations = $false
-                FeatureRecommendations = $false
-                UrlbarInterventions = $false
-                SkipOnboarding = $true
-            }
-            PasswordManagerEnabled = $false
-        }
-    }
-    
-    $policies | ConvertTo-Json -Depth 10 | Out-File -FilePath $policiesFile -Encoding UTF8 -Force
-    Write-Status "$($browser.Name) configured" "SUCCESS"
+    Write-Host "  [OK] $name" -ForegroundColor Green
 }
 
-function Get-FirefoxPath {
-    param($BrowserKey)
-    
-    $paths = @(
-        "C:\Program Files\Mozilla Firefox",
-        "C:\Program Files (x86)\Mozilla Firefox",
-        "$env:LOCALAPPDATA\Programs\Mozilla Firefox",
-        "C:\Program Files\LibreWolf",
-        "$env:LOCALAPPDATA\Programs\LibreWolf"
-    )
-    
-    foreach ($path in $paths) {
-        if (Test-Path $path) {
-            return $path
-        }
+# ============================================================================
+# Generate Launch Scripts
+# ============================================================================
+
+Write-Host ""
+Write-Host "[3/3] Generating launch scripts..." -ForegroundColor Yellow
+
+$browsers = @(
+    @{Name="Chrome"; Path="C:\Program Files\Google\Chrome\Application\chrome.exe"; Port=7891},
+    @{Name="Edge"; Path="C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"; Port=7892},
+    @{Name="Brave"; Path="C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"; Port=7893},
+    @{Name="Firefox"; Path="C:\Program Files\Mozilla Firefox\firefox.exe"; Port=7894; Type="Firefox"},
+    @{Name="LibreWolf"; Path="C:\Program Files\LibreWolf\librewolf.exe"; Port=7895; Type="Firefox"},
+    @{Name="Chromium"; Path="$env:LOCALAPPDATA\Chromium\Application\chrome.exe"; Port=7896},
+    @{Name="Vivaldi"; Path="$env:LOCALAPPDATA\Vivaldi\Application\vivaldi.exe"; Port=7897},
+    @{Name="Opera"; Path="$env:LOCALAPPDATA\Programs\Opera\opera.exe"; Port=7898}
+)
+
+foreach ($browser in $browsers) {
+    if (-not (Test-Path $browser.Path)) {
+        continue
     }
     
-    return $null
-}
-
-function New-LaunchScript {
-    param(
-        [string]$BrowserKey,
-        [int]$Index
-    )
-    
-    $browser = $Browsers[$BrowserKey]
-    $profileDir = Join-Path $Config.ProfileRoot $BrowserKey
-    $proxyPort = $Config.ProxyBasePort + $Index
-    
+    $profileDir = Join-Path $ProfileRoot $browser.Name
     if (-not (Test-Path $profileDir)) {
         New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
     }
     
-    $scriptPath = Join-Path $Config.ProfileRoot "Launch_$BrowserKey.bat"
+    $scriptPath = Join-Path $ProfileRoot "Launch_$($browser.Name).bat"
     
     if ($browser.Type -eq "Firefox") {
-        $exePath = Join-Path (Get-FirefoxPath $BrowserKey) "firefox.exe"
         $content = @"
 @echo off
 title $($browser.Name)
-start "" "$exePath" -profile "$profileDir" -no-remote
+start "" "$($browser.Path)" -profile "$profileDir" -no-remote
 "@
     } else {
-        $exePath = Get-ChromiumPath $BrowserKey
         $content = @"
 @echo off
 title $($browser.Name)
-start "" "$exePath" --user-data-dir="$profileDir" --proxy-server=127.0.0.1:$proxyPort --lang=$($Config.Language) --no-first-run --no-default-browser-check
+start "" "$($browser.Path)" --user-data-dir="$profileDir" --proxy-server=socks5://127.0.0.1:$($browser.Port) --lang=en-US --no-first-run --no-default-browser-check
 "@
     }
     
-    $content | Out-File -FilePath $scriptPath -Encoding ASCII -Force
-    Write-Status "Launch script created: Launch_$BrowserKey.bat" "SUCCESS"
+    Set-Content -Path $scriptPath -Value $content -Encoding ASCII
+    Write-Host "  [OK] Launch_$($browser.Name).bat" -ForegroundColor Green
 }
 
-function Get-ChromiumPath {
-    param($BrowserKey)
-    
-    $commonPaths = @{
-        Chrome = @(
-            "C:\Program Files\Google\Chrome\Application\chrome.exe",
-            "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-        )
-        Edge = @(
-            "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
-            "C:\Program Files\Microsoft\Edge\Application\msedge.exe"
-        )
-        Brave = @(
-            "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\Application\brave.exe",
-            "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
-        )
-        Chromium = @(
-            "C:\Program Files\Chromium\Application\chrome.exe",
-            "$env:LOCALAPPDATA\Chromium\Application\chrome.exe"
-        )
-        Vivaldi = @(
-            "$env:LOCALAPPDATA\Vivaldi\Application\vivaldi.exe",
-            "C:\Program Files\Vivaldi\Application\vivaldi.exe"
-        )
-        Opera = @(
-            "$env:LOCALAPPDATA\Programs\Opera\launcher.exe",
-            "C:\Program Files\Opera\launcher.exe"
-        )
-    }
-    
-    foreach ($path in $commonPaths[$BrowserKey]) {
-        if (Test-Path $path) {
-            return $path
-        }
-    }
-    
-    return $null
-}
+# Launch All script
+$launchAllPath = Join-Path $ProfileRoot "Launch_All.bat"
+$launchAllContent = @"
+@echo off
+title Launch All Browsers
+echo Starting all browsers...
+"@
 
-# ============================================================================
-# Main Execution
-# ============================================================================
-
-Write-Host ""
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "Multi-Browser Anti-Detect Deployment" -ForegroundColor Cyan
-Write-Host "Version 2.0 - Official Compliant" -ForegroundColor Cyan
-Write-Host "========================================" -ForegroundColor Cyan
-Write-Host ""
-
-# Check winget
-if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-    Write-Status "Winget not found. Please install App Installer from Microsoft Store." "ERROR"
-    exit 1
-}
-
-# Create directories
-if (-not (Test-Path $Config.BrowserRoot)) {
-    New-Item -ItemType Directory -Path $Config.BrowserRoot -Force | Out-Null
-}
-if (-not (Test-Path $Config.ProfileRoot)) {
-    New-Item -ItemType Directory -Path $Config.ProfileRoot -Force | Out-Null
-}
-
-# Step 1: Check installed browsers
-Write-Status "Step 1: Checking installed browsers..." "INFO"
-Write-Host ""
-
-$installed = @()
-$missing = @()
-
-foreach ($key in $Browsers.Keys) {
-    $browser = $Browsers[$key]
-    
-    if ($browser.Type -eq "Firefox") {
-        $path = Get-FirefoxPath $key
-    } else {
-        $path = Get-ChromiumPath $key
-    }
-    
-    if ($path -and (Test-Path $path)) {
-        Write-Status "$($browser.Name) - Already installed" "SUCCESS"
-        $installed += $key
-    } else {
-        Write-Status "$($browser.Name) - Not installed" "WARN"
-        $missing += $key
+foreach ($browser in $browsers) {
+    if (Test-Path $browser.Path) {
+        $launchAllContent += "`nstart `"`" `"%~dp0Launch_$($browser.Name).bat`"`ntimeout /t 2 /nobreak >nul"
     }
 }
 
-# Step 2: Install missing browsers
-if ($missing.Count -gt 0) {
-    Write-Host ""
-    Write-Status "Step 2: Installing $($missing.Count) missing browsers..." "INFO"
-    Write-Host ""
-    
-    foreach ($key in $missing) {
-        if (Install-Browser $key) {
-            $installed += $key
-        }
-    }
-} else {
-    Write-Host ""
-    Write-Status "Step 2: All browsers already installed" "SUCCESS"
-}
+$launchAllContent += "`necho All browsers launched!"
 
-# Step 3: Configure browsers
-Write-Host ""
-Write-Status "Step 3: Applying privacy configurations..." "INFO"
-Write-Host ""
+Set-Content -Path $launchAllPath -Value $launchAllContent -Encoding ASCII
+Write-Host "  [OK] Launch_All.bat" -ForegroundColor Green
 
-foreach ($key in $installed) {
-    $browser = $Browsers[$key]
-    
-    if ($browser.Type -eq "Chromium") {
-        Configure-ChromiumBrowser $key
-    } else {
-        Configure-FirefoxBrowser $key
-    }
-}
-
-# Step 4: Generate launch scripts
-Write-Host ""
-Write-Status "Step 4: Generating launch scripts..." "INFO"
-Write-Host ""
-
-$index = 0
-foreach ($key in $installed) {
-    New-LaunchScript $key $index
-    $index++
-}
-
-# Create master launch script
-$masterScript = Join-Path $Config.ProfileRoot "Launch_All.bat"
-$masterContent = "@echo off`r`ntitle Launch All Browsers`r`n"
-
-foreach ($key in $installed) {
-    $scriptPath = Join-Path $Config.ProfileRoot "Launch_$key.bat"
-    $masterContent += "start """" ""$scriptPath""`r`n"
-    $masterContent += "timeout /t 2 /nobreak >nul`r`n"
-}
-
-$masterContent | Out-File -FilePath $masterScript -Encoding ASCII -Force
-Write-Status "Master launch script created: Launch_All.bat" "SUCCESS"
-
-# Summary
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
-Write-Host "Deployment Complete!" -ForegroundColor Green
+Write-Host "Setup Complete!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "Installed browsers: $($installed.Count) / 8" -ForegroundColor Cyan
-Write-Host "Profile directory: $($Config.ProfileRoot)" -ForegroundColor Cyan
-Write-Host "Proxy ports: $($Config.ProxyBasePort)-$($Config.ProxyBasePort + 7)" -ForegroundColor Cyan
+Write-Host "Launch scripts: $ProfileRoot" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Yellow
-Write-Host "  1. Configure Clash with 8 SOCKS5 proxies (ports 7891-7898)" -ForegroundColor White
-Write-Host "  2. Run Launch_All.bat to start all browsers" -ForegroundColor White
-Write-Host "  3. Install extensions manually (Canvas Defender, WebRTC Shield)" -ForegroundColor White
+Write-Host "  1. Configure Clash with 8 different US IPs (ports 7891-7898)" -ForegroundColor White
+Write-Host "  2. Run Launch_All.bat to test" -ForegroundColor White
+Write-Host "  3. Verify at https://browserleaks.com/webrtc" -ForegroundColor White
 Write-Host ""
