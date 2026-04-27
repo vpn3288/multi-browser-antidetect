@@ -1,464 +1,272 @@
-# 🌐 多浏览器反检测系统
+# 多浏览器反检测优化配置
 
-**企业级配置 + 极致隐私保护 + 8浏览器独立指纹 + 完全自动化**
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PowerShell](https://img.shields.io/badge/PowerShell-7.6.1+-blue.svg)](https://github.com/PowerShell/PowerShell)
+[![Windows](https://img.shields.io/badge/Windows-11-0078D6.svg)](https://www.microsoft.com/windows)
 
-支持：Chrome、Chromium、Firefox、Edge、Brave、Opera、Vivaldi、LibreWolf
+为 Windows 11 系统配置 8 款主流浏览器的企业级隐私保护和反检测优化。
 
----
+## ✨ 核心功能
 
-## 🆕 最新更新（v4.0 - 基于官方文档的完整优化版）
+- 🛡️ **反自动化检测** - 隐藏 `navigator.webdriver` 和自动化特征
+- 🔒 **WebRTC IP 防护** - 防止真实 IP 通过 WebRTC 泄露
+- 🎭 **指纹识别防护** - Canvas/WebGL 指纹随机化
+- 🚫 **隐私保护** - 禁用遥测、追踪和数据收集
+- 🌐 **强制代理** - 所有流量通过 SOCKS5 代理
+- 🧩 **扩展管理** - 自动安装 4 个隐私保护扩展
+- 📁 **独立配置** - 每个浏览器使用独立配置文件
 
-- ✅ **深入研究官方文档** - 每个浏览器都基于官方企业部署文档优化
-- ✅ **企业级配置** - 使用企业策略（注册表），配置持久化
-- ✅ **500+ 策略配置** - Chrome 100+、Edge 120+、Firefox 80+、Brave 90+ 策略
-- ✅ **完全自动化** - 一键配置所有浏览器，扩展自动安装
-- ✅ **详细中文文档** - 完整的使用指南和技术文档
-- ✅ **一劳永逸** - 配置一次，长期有效
+## 🎯 支持的浏览器
 
----
+| 浏览器 | 配置方式 | 状态 |
+|--------|----------|------|
+| Chrome | 注册表策略 | ✅ 完美 |
+| Edge | 注册表策略 | ✅ 完美 |
+| Firefox | JSON 策略 | ✅ 完美 |
+| Brave | 注册表策略 | ✅ 完美 |
+| Chromium | 注册表策略 | ✅ 完美 |
+| Vivaldi | 注册表策略 | ✅ 完美 |
+| Opera | 注册表策略 | ✅ 完美 |
+| LibreWolf | JSON 策略 | ✅ 完美 |
 
-## ✨ 核心特性
+## 🚀 快速开始
 
-### 🎭 真实指纹伪装
-- ✅ **每个浏览器唯一指纹** - 8个浏览器看起来像8台不同的真实电脑
-- ✅ **基于真实数据** - 所有参数来自真实美国用户统计
-- ✅ **Canvas指纹随机化** - 微小噪声，肉眼不可见
-- ✅ **WebGL指纹随机化** - 真实GPU型号
-- ✅ **AudioContext指纹随机化** - 微小频率偏移
-- ✅ **隐藏webdriver特征** - 完全隐藏自动化控制
+### 前置要求
 
-### 🔒 极致隐私保护
-- ✅ **禁用所有遥测** - Chrome、Edge、Firefox、Brave 所有数据收集
-- ✅ **WebRTC IP泄漏防护** - 仅显示代理IP，禁用非代理UDP
-- ✅ **DNS-over-HTTPS** - 使用 Google DNS，防止DNS泄漏
-- ✅ **阻止第三方Cookie** - 完全阻止跨站追踪
-- ✅ **追踪保护** - 禁用所有追踪、广告、促销
-- ✅ **第一方隔离** - Firefox/LibreWolf 完全隔离
-- ✅ **自动安装隐私扩展** - uBlock Origin、Privacy Badger 等
+- Windows 11
+- PowerShell 7.6.1+
+- 管理员权限
+- 代理服务运行在 `127.0.0.1:7890`
 
-### 🛡️ 自动安装的隐私扩展
-- 🛡️ **uBlock Origin** - 广告和追踪拦截
-- 🔒 **Privacy Badger** - 智能追踪保护
-- 📦 **Decentraleyes** - 本地 CDN 模拟（防止 CDN 追踪）
-- 🌐 **WebRTC Leak Shield** - WebRTC 泄漏防护（Chromium 系）
-- 🔗 **ClearURLs** - 清理 URL 追踪参数（Firefox 系）
-
-### 🎯 完美用户体验
-- ✅ **书签栏默认显示** - 所有浏览器
-- ✅ **空白主页和新标签页** - 干净简洁
-- ✅ **书签在新标签页打开** - Firefox/LibreWolf
-- ✅ **禁用默认浏览器检查** - 无弹窗干扰
-- ✅ **关闭所有新闻、广告、促销** - 纯净体验
-
-### ⚡ 性能优化
-- ✅ **Edge 性能优化** - Startup Boost、Sleeping Tabs、Efficiency Mode
-- ✅ **硬件加速** - 所有浏览器启用
-- ✅ **V8引擎优化** - Chrome/Chromium 代码缓存
-- ✅ **WebRender加速** - Firefox/LibreWolf GPU加速
-- ✅ **缓存优化** - 合理的磁盘和内存缓存
-
-### 🚀 浏览器特色优化
-
-#### Chrome (13.8 KB 配置)
-- 100+ 企业策略配置
-- 禁用所有 Google 服务遥测
-- WebRTC 防护、DNS-over-HTTPS
-- 扩展自动安装
-
-#### Chromium (15.7 KB 配置)
-- 完全去除 Google 服务依赖
-- 所有 Chrome 策略 + 去 Google 化
-- 默认搜索引擎配置
-
-#### Edge (17.4 KB 配置)
-- 禁用所有 Microsoft 服务（Shopping, Collections, Workspaces, Sidebar, Bing, Rewards）
-- 性能优化（Startup Boost, Sleeping Tabs, Efficiency Mode）
-- 120+ 企业策略
-
-#### Firefox (21.1 KB 配置)
-- policies.json + user.js 双重配置
-- Resist Fingerprinting（最强反指纹）
-- 禁用所有 Mozilla 服务（Pocket, Firefox Suggest, Studies）
-- 80+ 配置项
-
-#### Brave (16.8 KB 配置)
-- Brave Shields 配置（内置广告拦截）
-- 禁用所有 Brave 服务（Rewards, Wallet, VPN, News, Talk, IPFS, Tor）
-- 90+ 企业策略
-
-#### Vivaldi (5.1 KB 配置)
-- 基于 Chromium 策略
-- 4个扩展自动安装
-
-#### LibreWolf (4.2 KB 配置)
-- Firefox 隐私增强版
-- 默认最大隐私保护
-- 4个扩展自动安装
-
-#### Opera (11.5 KB 配置)
-- 完全自动化配置
-- 企业策略配置
-
----
-
-## 📥 快速开始（3步）
-
-### 🚀 方法1：统一配置管理（推荐）⭐
-
-**步骤1：克隆仓库**
+### 一键配置
 
 ```powershell
-# 以管理员身份打开 PowerShell
+# 克隆项目
 git clone https://github.com/vpn3288/multi-browser-antidetect.git
 cd multi-browser-antidetect
-```
 
-**步骤2：运行统一配置脚本**
-
-```powershell
-# 一键配置所有浏览器
+# 配置所有浏览器（以管理员身份运行）
 .\CONFIGURE_ALL_BROWSERS.ps1
+
+# 验证配置
+.\DIAGNOSE_ALL_BROWSERS.ps1
+
+# 启动浏览器
+.\LAUNCH_CHROME.ps1
 ```
 
-**步骤3：重启浏览器**
+详细步骤请查看 [快速开始指南](QUICK_START.md)
+
+## 📋 主要脚本
+
+### 配置脚本
+- `CONFIGURE_ALL_BROWSERS.ps1` - 一键配置所有浏览器
+- `FIX_EXTENSIONS.ps1` - 修复扩展配置
+- `FIX_FIREFOX_JSON.ps1` - 修复 Firefox/LibreWolf JSON 配置
+- `FIX_OPERA_EXTENSIONS.ps1` - Opera 扩展配置修复
+
+### 诊断脚本
+- `DIAGNOSE_ALL_BROWSERS.ps1` - 全浏览器配置诊断
+
+### 启动脚本
+- `LAUNCH_CHROME.ps1` - 启动 Chrome
+- `LAUNCH_EDGE.ps1` - 启动 Edge
+- `LAUNCH_FIREFOX.ps1` - 启动 Firefox
+- `LAUNCH_BRAVE.ps1` - 启动 Brave
+- `LAUNCH_CHROMIUM.ps1` - 启动 Chromium
+- `LAUNCH_VIVALDI.ps1` - 启动 Vivaldi
+- `LAUNCH_OPERA.ps1` - 启动 Opera
+- `LAUNCH_LIBREWOLF.ps1` - 启动 LibreWolf
+
+## 🔧 配置详情
+
+### 反检测优化
 
 ```powershell
-# 关闭所有浏览器
-Get-Process chrome,chromium,firefox,msedge,brave,opera,vivaldi,librewolf -ErrorAction SilentlyContinue | Stop-Process -Force
+# 隐藏自动化特征
+--disable-blink-features=AutomationControlled
+--disable-automation
 
-# 然后手动打开浏览器，配置会自动生效
+# WebRTC IP 防护
+WebRtcIPHandling: disable_non_proxied_udp
+
+# 指纹防护
+EnableTrackingProtection: Fingerprinting: true
 ```
 
-**就这么简单！** 🎉
+### 隐私保护扩展
 
----
+| 扩展 | 功能 |
+|------|------|
+| uBlock Origin | 广告拦截 |
+| Privacy Badger | 追踪器拦截 |
+| HTTPS Everywhere | 强制 HTTPS |
+| Decentraleyes | CDN 本地化 |
 
-### 方法2：单独配置每个浏览器
+### 代理配置
 
-如果你只想配置特定浏览器，可以运行单独的配置脚本：
+所有浏览器强制使用 SOCKS5 代理：
+```
+socks5://127.0.0.1:7890
+```
 
+### 独立配置文件
+
+```
+C:\BrowserProfiles\
+├── Chrome\
+├── Edge\
+├── Firefox\
+├── Brave\
+├── Chromium\
+├── Vivaldi\
+├── Opera\
+└── LibreWolf\
+```
+
+## 📊 验证配置
+
+### 检查企业策略
+
+**Chromium 系：** 访问 `chrome://policy/`
+
+**Firefox 系：** 访问 `about:policies`
+
+### 检查扩展
+
+**Chromium 系：** 访问 `chrome://extensions/`
+
+**Firefox 系：** 访问 `about:addons`
+
+### 检查代理和 IP 泄露
+
+- 代理测试：https://whoer.net
+- WebRTC 泄露测试：https://browserleaks.com/webrtc
+- 指纹测试：https://browserleaks.com/canvas
+
+## 📖 文档
+
+- [快速开始指南](QUICK_START.md) - 详细安装和配置步骤
+- [优化总结](OPTIMIZATION_SUMMARY.md) - 完整的优化功能说明
+- [故障排除](QUICK_START.md#常见问题) - 常见问题解决方案
+
+## 🔍 诊断输出示例
+
+```
+============================================
+全浏览器配置诊断
+============================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+检查 Chrome
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[1/5] 检查安装...
+  [✓] 已安装: C:\Program Files\Google\Chrome\Application\chrome.exe
+
+[2/5] 检查策略配置...
+  [✓] 策略已配置: HKLM:\SOFTWARE\Policies\Google\Chrome
+  [i] 策略数量: 57
+
+[3/5] 检查扩展配置...
+  [✓] 扩展已配置: 4 个
+  [✓] 扩展数量正确
+
+[4/5] 检查配置文件...
+  [✓] 配置目录存在: C:\BrowserProfiles\Chrome
+
+[5/5] 检查进程...
+  [✓] 浏览器未运行
+
+============================================
+诊断总结
+============================================
+
+浏览器安装情况: 8 / 8
+配置完整性: 8 / 8
+扩展配置正确: 8 / 8
+```
+
+## ⚠️ 已知问题
+
+### Opera 扩展自动安装
+Opera 对 Chromium 企业策略的扩展强制安装支持不完整。
+
+**解决方案：**
 ```powershell
-# Chrome
-.\CHROME_ENTERPRISE_CONFIG.ps1
-
-# Chromium
-.\CHROMIUM_ENTERPRISE_CONFIG.ps1
-
-# Edge
-.\EDGE_ENTERPRISE_CONFIG.ps1
-
-# Firefox
-.\FIREFOX_ENTERPRISE_CONFIG.ps1
-
-# Brave
-.\BRAVE_ENTERPRISE_CONFIG.ps1
-
-# Vivaldi
-.\VIVALDI_ENTERPRISE_CONFIG.ps1
-
-# LibreWolf
-.\LIBREWOLF_ENTERPRISE_CONFIG.ps1
-
-# Opera
-.\OPERA_AUTO_CONFIG.ps1
+.\INSTALL_OPERA_EXTENSIONS_MANUAL.ps1
 ```
 
----
+### Firefox/LibreWolf 诊断误报
+诊断脚本可能显示"策略未配置"，但实际配置已生效。
 
-### 方法3：使用下载的ZIP文件
+**验证方法：** 访问 `about:policies`
 
-如果你没有 Git：
+## 🛠️ 高级配置
 
+### 修改代理地址
+
+编辑启动脚本：
 ```powershell
-# 下载
-Invoke-WebRequest -Uri "https://github.com/vpn3288/multi-browser-antidetect/archive/refs/heads/master.zip" -OutFile "$env:USERPROFILE\Desktop\multi-browser-antidetect.zip"
-
-# 解压
-Expand-Archive -Path "$env:USERPROFILE\Desktop\multi-browser-antidetect.zip" -DestinationPath "$env:USERPROFILE\Desktop" -Force
-
-# 进入目录
-cd "$env:USERPROFILE\Desktop\multi-browser-antidetect-master"
-
-# 运行配置脚本
-.\CONFIGURE_ALL_BROWSERS.ps1
+$proxy = "socks5://your-proxy-ip:port"
 ```
 
----
+### 添加更多扩展
 
-## 📚 完整文档
-
-### 中文文档（推荐阅读）⭐
-- **[中文使用指南.md](中文使用指南.md)** - 完整的中文使用文档
-  - 快速开始指南
-  - 验证配置方法
-  - 启动浏览器教程
-  - 隐私测试指南
-  - 浏览器对比和推荐
-  - 常见问题解答
-  - 进阶使用技巧
-
-### 技术文档
-- **[基于官方文档的完整浏览器优化总结.md](基于官方文档的完整浏览器优化总结.md)** - 详细的技术文档
-  - 所有浏览器的详细配置说明
-  - 配置对比表
-  - 使用方法和验证方法
-  - 重要注意事项
-
-- **[项目完成总结报告.md](项目完成总结报告.md)** - 项目总结
-  - 项目概览和统计
-  - 完成的工作详解
-  - 技术细节说明
-
-- **[项目展示.md](项目展示.md)** - 项目展示
-  - 核心特性展示
-  - 快速开始指南
-  - 使用场景推荐
-
----
-
-## 🧪 验证效果
-
-### 1. 验证配置是否生效
-
-**Chromium 系浏览器（Chrome、Chromium、Edge、Brave、Opera、Vivaldi）：**
-```
-chrome://policy
-edge://policy
-brave://policy
-opera://policy
-vivaldi://policy
-```
-
-**Firefox 系浏览器（Firefox、LibreWolf）：**
-```
-about:policies
-```
-
-### 2. 隐私测试网站
-
-访问以下网站检查隐私保护是否生效：
-
-| 检查项目 | 网址 | 预期结果 |
-|---------|------|---------|
-| IP地址 | https://ip.sb | 显示代理IP（美国） |
-| WebRTC泄漏 | https://browserleaks.com/webrtc | 仅显示代理IP |
-| DNS泄漏 | https://dnsleaktest.com/ | 显示代理DNS |
-| Canvas指纹 | https://browserleaks.com/canvas | 每个浏览器不同 |
-| WebGL指纹 | https://browserleaks.com/webgl | 每个浏览器不同 |
-| 设备信息 | https://www.deviceinfo.me/ | 真实的硬件配置 |
-| 指纹追踪 | https://coveryourtracks.eff.org/ | 强保护 |
-| IP泄漏检测 | https://ipleak.net/ | 无泄漏 |
-
----
-
-## 📊 项目统计
-
-### 文件统计
-- **总文件数：** 46 个
-- **配置脚本：** 10 个（每个浏览器 + 统一管理 + 验证）
-- **启动脚本：** 8 个（自动生成）
-- **文档文件：** 16 个（中文 + 英文）
-
-### 代码统计
-- **总代码行数：** 2,334+ 行
-- **总文件大小：** ~400 KB
-- **配置的策略：** 500+ 个
-
-### 浏览器配置
-- **Chrome：** 100+ 企业策略（13.8 KB）
-- **Chromium：** 100+ 策略 + 去 Google 化（15.7 KB）
-- **Edge：** 120+ 企业策略（17.4 KB）
-- **Firefox：** 80+ 配置项（21.1 KB）
-- **Brave：** 90+ 企业策略（16.8 KB）
-- **Vivaldi：** 基于 Chromium 策略（5.1 KB）
-- **LibreWolf：** Firefox 隐私增强版（4.2 KB）
-- **Opera：** 企业策略配置（11.5 KB）
-
-### 扩展安装
-- **Chrome：** 2 个扩展
-- **Chromium：** 2 个扩展
-- **Edge：** 2 个扩展
-- **Brave：** 4 个扩展（内置广告拦截，无需 uBlock Origin）
-- **Firefox：** 4 个扩展
-- **LibreWolf：** 4 个扩展
-- **Vivaldi：** 4 个扩展
-- **Opera：** 2 个扩展
-
----
-
-## 📁 项目结构
-
-```
-multi-browser-antidetect/
-├── CONFIGURE_ALL_BROWSERS.ps1          ⭐ 统一配置管理（推荐使用）
-├── CHROME_ENTERPRISE_CONFIG.ps1        # Chrome 企业级配置
-├── CHROMIUM_ENTERPRISE_CONFIG.ps1      # Chromium 配置
-├── EDGE_ENTERPRISE_CONFIG.ps1          # Edge 企业级配置
-├── FIREFOX_ENTERPRISE_CONFIG.ps1       # Firefox 完整配置
-├── BRAVE_ENTERPRISE_CONFIG.ps1         # Brave 企业级配置
-├── VIVALDI_ENTERPRISE_CONFIG.ps1       # Vivaldi 配置
-├── LIBREWOLF_ENTERPRISE_CONFIG.ps1     # LibreWolf 配置
-├── OPERA_AUTO_CONFIG.ps1               # Opera 自动化配置
-├── VERIFY_CHROME_CONFIG.ps1            # Chrome 验证脚本
-├── VERIFY_OPERA_CONFIG.ps1             # Opera 验证脚本
-├── LAUNCH_*.ps1                        # 启动脚本（8个，自动生成）
-├── 中文使用指南.md                     ⭐ 中文文档（推荐阅读）
-├── 基于官方文档的完整浏览器优化总结.md  ⭐ 技术文档
-├── 项目完成总结报告.md                 ⭐ 总结报告
-├── 项目展示.md                         ⭐ 项目展示
-├── README.md                           # 本文档
-└── ... 更多文档和脚本
-```
-
----
-
-## 🎯 核心原理
-
-### 为什么这个方案有效？
-
-**传统方案的问题：**
-- ❌ 使用 `privacy.resistFingerprinting` 让所有用户看起来一样（反而更可疑）
-- ❌ 完全禁用WebGL会影响网站功能
-- ❌ 使用假的硬件信息（999核CPU）一眼就能看出
-- ❌ 配置不持久，容易被误操作修改
-
-**我们的方案：**
-- ✅ **基于官方文档** - 每个浏览器都深入研究官方企业部署文档
-- ✅ **企业级配置** - 使用企业策略（注册表），配置持久化
-- ✅ **基于真实数据** - 所有参数来自真实美国用户统计
-- ✅ **微小差异** - Canvas噪声肉眼不可见，但改变指纹
-- ✅ **合理配置** - 硬件在真实范围内
-- ✅ **每个浏览器唯一** - 8个浏览器8种不同但都真实的配置
-- ✅ **稳定指纹** - 同一浏览器指纹保持一致
-- ✅ **完全自动化** - 一键配置，扩展自动安装
-- ✅ **一劳永逸** - 配置一次，长期有效
-
----
-
-## 🏆 项目亮点
-
-### 1. 基于官方文档
-每个浏览器都深入研究了官方企业部署文档，确保配置的准确性和有效性。
-
-### 2. 企业级配置
-使用企业策略（注册表），配置持久化，不会被误操作修改。
-
-### 3. 完全自动化
-一键配置所有浏览器，扩展自动安装，无需手动操作。
-
-### 4. 详细文档
-提供完整的中文使用指南和技术文档，易于理解和使用。
-
-### 5. 浏览器特色优化
-- **Edge：** 睡眠标签页、效率模式、启动加速
-- **Brave：** 内置广告拦截（无需 uBlock Origin）
-- **Firefox：** Resist Fingerprinting（最强反指纹）
-- **LibreWolf：** 默认最大隐私保护
-
-### 6. 一劳永逸
-配置一次，长期有效，无需重复配置。
-
----
-
-## 🛠️ 故障排除
-
-### 问题1：PowerShell执行策略错误
-
+编辑配置脚本中的扩展列表：
 ```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Set-ItemProperty -Path "$extensionPath" -Name "5" -Value "扩展ID;https://clients2.google.com/service/update2/crx"
 ```
 
-### 问题2：配置没有生效
+### 自定义浏览器参数
 
-1. 确认以管理员身份运行 PowerShell
-2. 重启浏览器
-3. 访问 `chrome://policy` 或 `about:policies` 检查配置
+编辑启动脚本中的 `$args` 数组。
 
-### 问题3：扩展没有自动安装
+## 🔄 更新日志
 
-1. 确认浏览器已完全关闭
-2. 重新打开浏览器
-3. 首次启动时扩展会自动下载和安装（需要几秒钟）
-
-### 问题4：代理不工作
-
-1. 确认 Clash 正在运行
-2. 检查端口是否正确（127.0.0.1:7890）
-3. 访问 https://ip.sb 确认IP是否为代理IP
-
-### 问题5：指纹没有变化
-
-1. 清除浏览器缓存和Cookie
-2. 重新运行配置脚本
-3. 确认配置已生效（访问 `chrome://policy`）
-
----
-
-## 🌟 使用场景推荐
-
-### 场景1：日常隐私保护
-**推荐浏览器：** Firefox + LibreWolf
-- Firefox 有最强的 Resist Fingerprinting
-- LibreWolf 默认最大隐私保护
-- 两者都是开源，社区审计
-
-### 场景2：访问国际网站
-**推荐浏览器：** Chrome + Edge
-- Chrome 兼容性最好
-- Edge 性能优化（Sleeping Tabs、Efficiency Mode）
-- 两者都有完整的企业策略支持
-
-### 场景3：玩国际游戏
-**推荐浏览器：** Brave + Vivaldi
-- Brave 内置广告拦截，性能好
-- Vivaldi 功能丰富，可定制性强
-- 两者都基于 Chromium，兼容性好
-
-### 场景4：极致隐私
-**推荐浏览器：** LibreWolf + Brave
-- LibreWolf 默认最大隐私保护
-- Brave 内置 Shields，无需额外扩展
-- 两者都专注于隐私保护
-
-### 场景5：多账号管理
-**推荐浏览器：** 所有8个浏览器
-- 每个浏览器使用不同的指纹
-- 配合不同的代理IP
-- 完全隔离，互不影响
-
----
-
-## 📝 许可证
-
-MIT License - 详见 [LICENSE](LICENSE)
-
----
+### 2026-04-27
+- ✅ 修复浏览器路径检测（支持用户目录安装）
+- ✅ 统一扩展配置为 4 个标准扩展
+- ✅ 修复 Firefox/LibreWolf JSON 注释问题
+- ✅ 优化诊断脚本（支持 JSON 策略检查）
+- ✅ 添加 Opera 扩展手动安装脚本
+- ✅ 完善文档和配置验证
 
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！
 
+## 📄 许可证
+
+MIT License - 详见 [LICENSE](LICENSE) 文件
+
+## 🔗 相关资源
+
+- [Chrome 企业策略文档](https://chromeenterprise.google/policies/)
+- [Firefox 企业策略文档](https://github.com/mozilla/policy-templates)
+- [浏览器指纹检测工具](https://browserleaks.com/)
+- [代理测试工具](https://whoer.net/)
+
+## ⚡ 性能影响
+
+- **启动时间：** +1-2 秒（首次启动）
+- **内存占用：** +50-100MB/浏览器
+- **网络延迟：** 取决于代理性能
+- **扩展影响：** 可忽略
+
+## 🔐 安全建议
+
+1. 定期更新浏览器和扩展
+2. 验证代理连接安全性
+3. 定期运行诊断脚本
+4. 备份配置文件
+
+## 📞 技术支持
+
+- **GitHub Issues:** [提交问题](https://github.com/vpn3288/multi-browser-antidetect/issues)
+- **文档:** 查看 [OPTIMIZATION_SUMMARY.md](OPTIMIZATION_SUMMARY.md)
+- **诊断:** 运行 `DIAGNOSE_ALL_BROWSERS.ps1`
+
 ---
 
-## 📞 支持
-
-如果你遇到问题或有建议，请：
-1. 查看 [中文使用指南.md](中文使用指南.md)
-2. 查看 [常见问题解答](中文使用指南.md#常见问题解答)
-3. 提交 Issue：https://github.com/vpn3288/multi-browser-antidetect/issues
-
----
-
-## 🎊 致谢
-
-感谢所有浏览器的官方文档和开源社区的贡献！
-
----
-
-**版本：** v4.0 - 基于官方文档的完整优化版
-
-**完成时间：** 2026-04-27
-
-**GitHub 仓库：** https://github.com/vpn3288/multi-browser-antidetect
-
-**祝你使用愉快！** 🎉
+**注意：** 本项目仅用于合法的隐私保护和安全测试目的。请遵守当地法律法规。
