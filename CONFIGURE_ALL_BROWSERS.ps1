@@ -25,7 +25,7 @@ $Browsers = @{
         "Installed" = $false
     }
     "Chromium" = @{
-        "Path" = "C:\Program Files\Chromium\Application\chrome.exe"
+        "Path" = "$env:LOCALAPPDATA\Chromium\Application\chrome.exe"
         "Script" = ".\CHROMIUM_ENTERPRISE_CONFIG.ps1"
         "Installed" = $false
     }
@@ -45,7 +45,7 @@ $Browsers = @{
         "Installed" = $false
     }
     "Vivaldi" = @{
-        "Path" = "C:\Program Files\Vivaldi\Application\vivaldi.exe"
+        "Path" = "$env:LOCALAPPDATA\Vivaldi\Application\vivaldi.exe"
         "Script" = ".\VIVALDI_ENTERPRISE_CONFIG.ps1"
         "Installed" = $false
     }
@@ -55,7 +55,7 @@ $Browsers = @{
         "Installed" = $false
     }
     "Opera" = @{
-        "Path" = "C:\Program Files\Opera\launcher.exe"
+        "Path" = "$env:LOCALAPPDATA\Programs\Opera\opera.exe"
         "Script" = ".\OPERA_AUTO_CONFIG.ps1"
         "Installed" = $false
     }
