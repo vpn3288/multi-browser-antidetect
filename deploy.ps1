@@ -10,15 +10,15 @@
     - Firefox, LibreWolf (Firefox-based)
     
 .NOTES
-    Version: 3.0 Final
-    All configurations based on official documentation
+    Version: 4.0 - Vendor-Specific Deep Optimization
+    All configurations based on official vendor documentation
 #>
 
 $ErrorActionPreference = "Stop"
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "Multi-Browser Anti-Detect Setup v3.0" -ForegroundColor Cyan
+Write-Host "Multi-Browser Anti-Detect Setup v4.0" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -70,7 +70,56 @@ foreach ($name in $chromiumBrowsers.Keys) {
     # Critical: SafeBrowsing (keep enabled for legitimacy)
     Set-ItemProperty -Path $path -Name "SafeBrowsingProtectionLevel" -Value 1 -Type DWord -Force
     
-    Write-Host "  [OK] $name" -ForegroundColor Green
+    # Vendor-specific optimizations
+    switch ($name) {
+        "Chrome" {
+            Set-ItemProperty -Path $path -Name "BrowserSignin" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "EnableMediaRouter" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "TranslateEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "ChromeCleanupEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "UserFeedbackAllowed" -Value 0 -Type DWord -Force
+        }
+        "Edge" {
+            Set-ItemProperty -Path $path -Name "CopilotPageContext" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "EdgeShoppingAssistantEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "EdgeCollectionsEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "EdgeWorkspacesEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "HubsSidebarEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "ShowMicrosoftRewards" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "EdgeAssetDeliveryServiceEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "EdgeFollowEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "EdgeGamesEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "TrackingPrevention" -Value 2 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "SleepingTabsEnabled" -Value 1 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "SleepingTabsTimeout" -Value 7200 -Type DWord -Force
+        }
+        "Brave" {
+            Set-ItemProperty -Path $path -Name "BraveRewardsDisabled" -Value 1 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "BraveWalletDisabled" -Value 1 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "BraveVPNDisabled" -Value 1 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "BraveNewsEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "TorDisabled" -Value 1 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "BraveTalkEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "IPFSEnabled" -Value 0 -Type DWord -Force
+        }
+        "Vivaldi" {
+            Set-ItemProperty -Path $path -Name "VivaldiSidebarEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "VivaldiSpeedDialEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "VivaldiMailEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "VivaldiCalendarEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "VivaldiFeedReaderEnabled" -Value 0 -Type DWord -Force
+        }
+        "Opera" {
+            Set-ItemProperty -Path $path -Name "OperaSidebarEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "OperaVPNEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "OperaNewsEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "OperaTurboEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "OperaSpeedDialEnabled" -Value 0 -Type DWord -Force
+            Set-ItemProperty -Path $path -Name "OperaDiscoverEnabled" -Value 0 -Type DWord -Force
+        }
+    }
+    
+    Write-Host "  [OK] $name (with vendor-specific optimizations)" -ForegroundColor Green
 }
 
 # ============================================================================
